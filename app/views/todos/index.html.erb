@@ -28,7 +28,9 @@
           </th>
         </tr>
       </thead>
-      <tbody class="bg-white divide-y divide-gray-200">
+      <%# Render todos list in index.html.erb (index.html.erb) with id "todos" mapping
+       after_create_commit -> { broadcast_append_to :todos, target: "todos" }  in model todo.rb %>
+      <tbody id="todos" class="bg-white divide-y divide-gray-200">
         <% @form.each do |todo| %>
           <tr class="hover:bg-gray-50" id="<%= dom_id(todo) %>">
             <td class="px-6 py-4 whitespace-nowrap">
@@ -113,5 +115,8 @@
   </div>
 </div>
 
+
+<%# render turbo_frame_tag when click on todo %>
 <%= turbo_frame_tag "todo_details_frame" do %><% end %>
+<%# Register methods turbo_stream :todos %>
 <%= turbo_stream_from :todos %>

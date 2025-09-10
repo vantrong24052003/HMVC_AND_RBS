@@ -4,7 +4,7 @@
 # Creator: trongdn2405@gmail.com
 
 class Todos::CreateOperation < ApplicationOperation
-  attr_reader :form
+  attr_reader :form, :todo
 
   def call
     step_build_form { return }
