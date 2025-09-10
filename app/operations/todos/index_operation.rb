@@ -13,6 +13,6 @@ class Todos::IndexOperation < ApplicationOperation
   private
 
   def step_get_todos
-    @form = Todo.all
+    @form = Todo.order(created_at: :asc)
   end
 end
