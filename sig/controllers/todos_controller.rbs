@@ -1,0 +1,24 @@
+class TodosController < ApplicationController
+  @form: untyped
+
+  # [GET]...
+  def index: () -> void
+
+  # [GET]...
+  def show: () -> void
+
+  # [GET]...
+  def new: () -> void
+
+  # [POST]...
+  def create: () -> void
+
+  # [GET]...
+  def edit: () -> void
+
+  # [PUT]...
+  def update: () -> void
+
+  # [DELETE]...
+  def destroy: () -> void
+end

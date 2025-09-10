@@ -1,0 +1,11 @@
+class Todos::ShowOperation < ApplicationOperation
+  @form: Todos::EditForm
+
+  attr_reader form: Todos::EditForm
+
+  def call: () -> void
+
+  private
+
+  def step_get_todo: () -> void
+end

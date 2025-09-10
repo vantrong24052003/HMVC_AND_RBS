@@ -1,0 +1,92 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# 02_feature_rules.md
+
+## Mục đích
+Rule dùng để xử lý **mỗi yêu cầu tính năng** (ví dụ: refactor Quiz practice, thêm anti-cheat exam, endpoint events...). Dùng khi user gửi yêu cầu chức năng cụ thể.
+
+## Nguyên tắc chính
+- Mỗi feature phải break xuống thành các task nhỏ (Task 0..Task N)
+- Mỗi task là một prompt riêng gửi cho Cursor và Cursor phải hoàn thành từng task tuần tự
+- Không merge nhiều thay đổi lớn trong một bước; prefer nhiều bước nhỏ, kiểm thử giữa các bước
+
+## Workflow chuẩn cho 1 feature (ví dụ: Quiz)
+
+### 1. Task 0 — Khảo sát
+- Dùng `01_get_information.md`
+- Thu thập và phân tích thông tin hiện tại
+
+### 2. Task 1 — Thiết kế (domain & API contract)
+- Cursor tạo `design/feature_name.md` chứa:
+  - Public service methods
+  - Controller endpoints (params + response)
+  - DB changes đề xuất
+  - Client event contract (nếu có)
+  - **Error handling strategy** (validation errors vs system errors)
+  - **Transaction boundaries** (khi nào cần transactions)
+- Nếu có chỗ mơ hồ → hỏi user
+
+### 3. Task 2 — Model/migration đề xuất
+- Nếu cần thêm column/index → tạo migration content và lý do
+- **Không tự apply** migration; chờ confirm
+- **Transaction strategy**: Xác định khi nào cần database transactions
+
+### 4. Task 3 — Viết service core
+- Viết service class (English code), không comment
+- **Error handling**: Implement proper error handling với user-friendly messages
+- **Transactions**: Sử dụng transactions cho operations phức tạp
+- Kèm unit test skeleton
+
+### 5. Task 4 — Viết controller & routes
+- Controllers gọi service; giữ public actions ngắn gọn
+- **Error responses**: Return appropriate HTTP status codes
+- **Input validation**: Validate và sanitize input
+- Cập nhật `config/routes.rb` (show diff)
+
+### 6. Task 5 — Anti-cheating (nếu exam)
+- Tạo events endpoint, anti-cheating service, job, mailer
+- **Security validation**: Implement proper authorization checks
+
+### 7. Task 6 — Tests
+- Viết tests cho service + controller
+- **Error testing**: Test error scenarios và edge cases
+- **Performance testing**: Test với large datasets
+- Chạy tests local và report
+
+### 8. Task 7 — Self-test & Delivery
+- Chuẩn bị `summary.md` + checklist pass/fail + file diff
+- **Performance review**: Check for N+1 queries, memory usage
+- **Security review**: Verify authorization, input validation
+
+## Mẫu prompt khi bắt đầu feature
+
+```
+Use rule project_structure_rule
+Feature: Refactor Quiz Practice for dashboard
+Task 0: Run get_information (01_get_information.md). Report.
+```
+
+## Khi nào hỏi user (bắt buộc)
+- Khi cần thay đổi tên file hiện có
+- Khi cần migration DB
+- Khi ngưỡng anti-cheating chưa rõ
+- Khi không rõ flow UI (ví dụ: show explanation ngay hay wait until review)
+- **Khi cần xác định transaction boundaries**
+- **Khi cần clarify error handling strategy**
+
+## Yêu cầu code
+- Code bằng **tiếng Anh**
+- Không có bất kỳ comment nào (ngoại trừ `# frozen_string_literal: true`)
+- Tên class/file theo Rails conventions
+- **Proper error handling với meaningful messages**
+- **Database transactions cho complex operations**
+
+## Output mỗi task
+- Code hoặc design doc tương ứng
+- Test files (skeleton/full)
+- Checklist self-test (xem file 03 để mẫu checklist 1–5)
+- **Error handling documentation**
+- **Performance considerations**

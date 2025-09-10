@@ -1,0 +1,11 @@
+class Todos::IndexOperation < ApplicationOperation
+  @form: Todos::NewForm
+
+  attr_reader form: Todos::NewForm
+
+  def call: () -> void
+
+  private
+
+  def step_get_todos: () -> void
+end

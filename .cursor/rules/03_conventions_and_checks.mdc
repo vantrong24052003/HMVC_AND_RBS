@@ -1,0 +1,85 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# 03_conventions_and_checks.md
+
+## Mục đích
+Tập hợp các quy tắc bắt buộc, liên kết docs Rails, và **checklist self-test 1–6** áp dụng cho MỖI step/task. Cursor phải dùng checklist này để self-test và report kết quả.
+
+## Nguyên tắc chính
+- **Giao tiếp với user**: bằng **Tiếng Việt** (report, câu hỏi, confirm)
+- **Code**: viết bằng **Tiếng Anh**, **hạn chế comment** (chỉ cho complex business logic), bắt đầu bằng `# frozen_string_literal: true`
+- **Trước khi change**: Cursor phải liệt kê file sẽ thay đổi và xin confirm nếu file hiện có tên khác
+
+## Links tham khảo (Rails 8 docs)
+- Rails Guides (phần routes/controllers/models): https://guides.rubyonrails.org
+- Convention & RESTful controllers: https://guides.rubyonrails.org/action_controller_overview.html
+- Models & ActiveRecord: https://guides.rubyonrails.org/active_record_basics.html
+
+> Cursor phải tuân theo guidelines trong links trên. Nếu cần, trích dẫn cụ thể rule (bằng văn bản, không copy nguyên đoạn dài).
+
+## Checklist self-test (áp dụng cho MỖI step/task)
+
+Mỗi task khi hoàn thành, Cursor phải chạy checklist 6 mục và trả về kết quả (PASS/FAIL/N-A) kèm bằng chứng ngắn (command/output/test result):
+
+### 1. Tuân thủ convention project
+- **Kiểm tra**: file/class đặt đúng folder & tên theo convention
+- **PASS** nếu file nằm đúng đường dẫn và tên class match file
+
+### 2. Hạn chế comment trong code
+- **Kiểm tra**: file code không chứa comment thừa, chỉ có comment cho complex business logic
+- **PASS** nếu comments chỉ dùng cho complex algorithms hoặc business rules quan trọng
+
+### 3. Không mơ hồ (All specs clarified)
+- **Kiểm tra**: tất cả requirement mơ hồ đã được hỏi & user confirm (liệt kê câu hỏi + câu trả lời)
+- **PASS** nếu không còn open question
+
+### 4. Tuân thủ Rails conventions/docs
+- **Kiểm tra**: controller RESTful methods, model associations sử dụng ActiveRecord, no raw SQL in controller
+- **PASS** nếu không vi phạm
+
+### 5. Tuân thủ pattern 7 RESTful methods (nếu controller liên quan)
+- **Kiểm tra**: controller có đầy đủ hoặc hợp lý các method RESTful; public methods gọn (đối với non-controller N-A)
+- **PASS/N-A** tùy trường hợp
+
+### 6. Error Handling
+- **Kiểm tra**: Services có proper error handling, controllers return appropriate HTTP status
+- **PASS** nếu errors được handle gracefully với meaningful messages
+
+## Mẫu output checklist (Cursor must return)
+
+```
+Checklist for Task 3 — Write service:
+
+Tuân convention project: PASS (file: app/services/dashboard/quiz_service.rb)
+Hạn chế comment trong code: PASS
+Không mơ hồ: FAIL — question: "Should explanation be stored in response for practice?" — awaiting user confirm.
+Tuân Rails docs: PASS
+RESTful methods: N-A
+Error Handling: PASS
+```
+
+## Yêu cầu test & chạy
+- Cursor phải cung cấp lệnh để chạy test local (vd: `bundle exec rails test` hoặc `bundle exec rspec spec/path`) và báo kết quả test (pass/fail)
+- Nếu tests fail — liệt kê lỗi và propose fix
+
+## Khi hoàn tất toàn feature
+Cursor phải trả về `summary.md` gồm:
+- Danh sách file thay đổi/added
+- Migrations đề xuất (nếu có)
+- Các test đã thêm & kết quả
+- Checklist tổng hợp từng task (PASS/FAIL)
+- Hướng dẫn chạy (migrate, seed, run tests)
+
+## Khi cần rollback
+- Nếu user yêu cầu rollback, Cursor phải đề xuất commit diff/patch để revert (kèm hướng dẫn manual revert nếu cần)
+
+## Mẫu prompt bắt đầu full-flow (Shortcut)
+
+```
+Use rule 01_get_information, 02_feature_rules, 03_conventions_and_checks
+Feature: Refactor Quiz Practice (dashboard)
+Task 0: Run get_information and return report.
+```
