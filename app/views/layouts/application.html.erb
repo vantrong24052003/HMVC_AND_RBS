@@ -21,7 +21,9 @@
   </head>
 
   <body>
-    <%= render 'shared/flash', errors: [] %>
+    <div id="flash">
+      <%= render 'shared/flash', errors: [] %>
+    </div>
     <%= yield %>
   </body>
 </html>

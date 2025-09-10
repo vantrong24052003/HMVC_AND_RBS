@@ -1,3 +1,8 @@
+---
+description:
+globs:
+alwaysApply: true
+---
 # 04_project_structure_rule.md
 
 ## Mục đích

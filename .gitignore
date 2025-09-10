@@ -24,7 +24,6 @@
 
 /config/master.key
 /config/credentials/*.key
-/config/database.yml
 /public/vite*
 node_modules
 *.local
