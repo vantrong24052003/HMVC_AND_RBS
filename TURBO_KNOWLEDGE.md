@@ -202,8 +202,98 @@ end
 
 ---
 
-## Turbo Drive *(Coming Soon)*
-*Coming Soon*
+## Turbo Drive
+
+### Khái niệm
+Turbo Drive tự động chặn (intercept) các navigation (click link) và form submissions để tải trang kế tiếp qua XHR, thay vì full reload. Nó giữ lại layout, chỉ thay đổi `<body>` và cập nhật lịch sử trình duyệt mượt mà.
+
+### Hành vi mặc định
+- Link `<a>` và form `<form>` sẽ được Turbo xử lý nếu không tắt.
+- Navigation sẽ:
+  - Tải HTML trang đích qua XHR
+  - Thay thế `<body>` và cập nhật `document.title`
+  - Đẩy entry vào browser history (có thể Back/Forward)
+- Form submit có thể là GET/POST/PUT/PATCH/DELETE (theo Rails UJS)
+
+### Cấu hình nhanh
+- Tắt Turbo Drive cho một phần tử hoặc cây DOM:
+```erb
+<!-- Tắt cho một link -->
+<%= link_to "Go", some_path, data: { turbo: false } %>
+
+<!-- Tắt cho một form -->
+<%= form_with ..., data: { turbo: false } do |f| %>
+  ...
+<% end %>
+
+<!-- Tắt toàn cục (không khuyến nghị) -->
+<meta name="turbo-visit-control" content="reload">
+```
+- Buộc reload toàn trang khi click link:
+```erb
+<%= link_to "Hard reload", path, data: { turbo: "false" } %>
+```
+- Chuyển hướng ra khỏi frame (trong Turbo Frame):
+```erb
+<%= link_to "Open full", path, data: { turbo_frame: "_top" } %>
+```
+
+### Sự kiện (events) hữu ích
+Bạn có thể lắng nghe các sự kiện để hook logic UI:
+```javascript
+document.addEventListener("turbo:load", () => {
+  // Trang mới đã sẵn sàng sau một visit
+});
+
+document.addEventListener("turbo:before-visit", (e) => {
+  // Trước khi điều hướng (có thể hủy bằng e.preventDefault())
+});
+
+document.addEventListener("turbo:before-cache", () => {
+  // Trước khi trang hiện tại vào cache → dọn dẹp state UI (ẩn modal, reset video...)
+});
+```
+
+### Cache & Restoration Visit
+- Turbo Drive cache DOM của trang khi rời đi, để quay lại nhanh (Back/Forward)
+- `turbo:before-cache` là thời điểm dọn dẹp DOM vì trạng thái UI sẽ được lưu trong cache
+- Nếu muốn luôn reload dữ liệu khi quay lại, cân nhắc vô hiệu cache cho một số thành phần hoặc lắng nghe `turbo:load` để re-fetch
+
+### Redirect & Status Codes
+- 3xx redirect hoạt động bình thường với Turbo Drive
+- Với form errors (422 Unprocessable Entity), server có thể render lại template hiện tại; Turbo sẽ thay thế body theo response
+- Với Turbo Stream (mimetype `text/vnd.turbo-stream.html`), Turbo sẽ thực thi stream actions thay vì thay body
+
+### Tương tác với Turbo Frame & Turbo Stream
+- Turbo Drive lo phần navigation cấp trang (visit)
+- Turbo Frame cập nhật từng vùng DOM
+- Turbo Stream thực thi các hành động DOM (append/replace/remove...)
+- Khi ở trong Frame muốn “thoát” ra navigation cấp trang: dùng `data: { turbo_frame: "_top" }`
+
+### Mẫu dùng thực tế
+- Link chuyển trang bình thường (Turbo Drive xử lý):
+```erb
+<%= link_to "Danh sách Todos", todos_path %>
+```
+- Form submit và giữ lại trên cùng một trang khi lỗi (422):
+```ruby
+# controller
+if @form.errors.present?
+  render :edit, status: :unprocessable_entity
+else
+  redirect_to todos_path, notice: "Todo updated successfully"
+end
+```
+- Buộc reload toàn trang khi có asset/state phụ thuộc không tương thích với cache:
+```erb
+<meta name="turbo-visit-control" content="reload">
+```
+
+### Khi nào NÊN/NÊN KHÔNG dùng Turbo Drive
+- Nên: hầu hết navigation và form tiêu chuẩn để có UX mượt, nhanh
+- Không nên: trang phụ thuộc nặng vào JS khởi tạo lại toàn cục mà chưa tương thích với cache (khi đó tắt theo phần tử hoặc dùng `turbo:before-cache` để dọn dẹp)
+
+---
 
 ## Turbo Native *(Coming Soon)*
 *Coming Soon*
