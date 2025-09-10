@@ -1,0 +1,21 @@
+class ApplicationForm
+  extend ActiveModel::Translation
+
+  include ActiveModel::Model
+
+  include ActiveModel::Attributes
+
+  include ActiveModel::Validations::Callbacks
+
+  extend Enumerize
+
+  def initialize: (?::Hash[untyped, untyped] attributes) -> void
+
+  def valid!: () -> (untyped | nil)
+
+  private
+
+  def error_messages: () -> untyped
+
+  def attribute_names: () -> ::Array[untyped]
+end

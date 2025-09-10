@@ -1,0 +1,68 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# 01_get_information.md
+
+## Mục đích
+Quy tắc bắt buộc để Cursor **thu thập và xác minh tất cả thông tin** trước khi sửa/viết/refactor code. Mọi hành động thay đổi code phải bắt đầu từ bước này.
+
+## Nguyên tắc chính
+- **Bắt buộc**: dùng Cursor tools (`read_file`, `codebase_search`, `grep_search`) để đọc các file liên quan trước khi viết bất kỳ code nào.
+- **Giao tiếp**: mọi báo cáo, câu hỏi và xác nhận phải bằng **Tiếng Việt**.
+- **Code**: khi Cursor tạo hoặc sửa file code — code phải viết **bằng tiếng Anh** và **không có comment** (ngoại trừ `# frozen_string_literal: true`).
+
+## Các bước khảo sát (Task 0)
+
+### 1. Xác định feature scope
+Ví dụ: Quiz practice vs Quiz exam
+
+### 2. Dùng Cursor tools đọc các file model liên quan
+```bash
+# Sử dụng read_file tool để đọc models
+read_file app/models/quiz.rb
+read_file app/models/question.rb
+read_file app/models/quiz_attempt.rb
+read_file app/models/quiz_question.rb
+```
+
+### 3. Dùng Cursor tools đọc controllers/services/views liên quan
+```bash
+# Sử dụng read_file tool để đọc controllers và services
+read_file app/controllers/dashboard/quizzes_controller.rb
+read_file app/controllers/manage/quizzes_controller.rb
+read_file app/services/dashboard/quizzes_service.rb
+```
+
+### 4. Tóm tắt kết quả khảo sát
+Cho mỗi file liệt kê:
+- **Mục đích file** (1 dòng)
+- **Associations / validations / callbacks** (models)
+- **Public methods / hành vi quan trọng** (services/controllers)
+- **Phát hiện mâu thuẫn / duplicate logic / chỗ mơ hồ**
+
+### 5. Kiểm tra schema
+Nếu có thiếu schema, missing columns, hoặc need migration — đề xuất migration (nêu rõ lý do) nhưng không tự apply.
+
+### 6. Performance & Security Check
+- **N+1 Queries**: Kiểm tra associations có bị N+1 queries không
+- **Authorization**: Xem xét patterns authorization hiện tại
+- **Input Validation**: Review strategies validation input
+- **Error Handling**: Kiểm tra cách xử lý lỗi hiện tại
+
+## Output bắt buộc của Task 0
+
+Cursor phải trả về:
+
+1. **Danh sách file đã đọc**
+2. **Tóm tắt ngắn cho từng file** (max 10–12 dòng/file)
+3. **Danh sách các điểm mơ hồ** (mỗi điểm phải kèm câu hỏi rõ ràng để hỏi user)
+4. **Danh sách file/gói cần refactor**
+5. **Performance & Security findings** (N+1 queries, auth patterns, validation gaps)
+6. **Gợi ý bước tiếp theo** (design hoặc migration) kèm đề xuất prompt
+
+## Quy tắc khi khảo sát
+
+- Nếu Cursor phát hiện bất kỳ chỗ mơ hồ nào, phải dừng lại và hỏi user (không tự quyết)
+- Luôn bắt đầu report bằng: **"Hi, boss Trọng"** trước phần text báo cáo (không phải trong file code)

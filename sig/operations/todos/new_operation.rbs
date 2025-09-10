@@ -1,0 +1,11 @@
+class Todos::NewOperation < ApplicationOperation
+  @form: Todos::NewForm
+
+  attr_reader form: Todos::NewForm
+
+  def call: () -> void
+
+  private
+
+  def step_build_form: () -> void
+end

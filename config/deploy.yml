@@ -1,0 +1,59 @@
+service: project-rails-learning
+
+image: vantrong1/project-rails-learning
+
+servers:
+  web:
+    - 103.171.90.90
+
+proxy:
+  ssl: true
+  host: elearning.vantrongdng.id.vn
+  app_port: 3000
+
+registry:
+  username: vantrong1
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+env:
+  secret:
+    - RAILS_MASTER_KEY
+    - POSTGRES_PASSWORD
+  clear:
+    SOLID_QUEUE_IN_PUMA: true
+    DB_HOST: project-rails-learning-db
+
+aliases:
+  console: app exec --interactive --reuse "bin/rails console"
+  shell: app exec --interactive --reuse "bash"
+  logs: app logs -f
+  dbc: app exec --interactive --reuse "bin/rails dbconsole"
+
+volumes:
+  - "project-rails-learning_storage:/rails/storage"
+  - "db_data:/var/lib/postgresql/data"
+
+builder:
+  arch: amd64
+
+accessories:
+  db:
+    image: postgres:17
+    host: 103.171.90.90
+    port: 5432
+    env:
+      clear:
+        POSTGRES_USER: vantrong
+        POSTGRES_DB: project_rails_learning_production
+        POSTGRES_HOST_AUTH_METHOD: trust
+      secret:
+        - POSTGRES_PASSWORD
+    directories:
+      - data:/var/lib/postgresql/data
+  redis:
+    image: redis:7
+    host: 103.171.90.90
+    port: 6379
+    directories:
+      - redis_data:/data

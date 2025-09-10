@@ -1,0 +1,35 @@
+include:
+  - "**/*.rb"
+  - "**/*.erb"
+exclude:
+  - spec/**/*
+  - test/**/*
+  - vendor/**/*
+  - ".bundle/**/*"
+  - "sig/**/*"
+  - "db/**/*"
+  - "config/**/*"
+  - "bin/**/*"
+  - "lib/**/*"
+  - "tmp/**/*"
+  - "log/**/*"
+formatter:
+  rubocop:
+    cops: safe
+    except: []
+    only: []
+    require: []
+    ignore: []
+require: []
+domains: []
+require_paths: []
+reporters:
+- rubocop
+max_files: 3000
+diagnostics:
+  require_not_found: false
+  require_path_not_found: false
+  undefined_methods: false
+  undefined_objects: false
+  undefined_symbols: false
+  untyped_method_calls: false

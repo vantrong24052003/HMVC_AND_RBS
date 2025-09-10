@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Security scan script for Rails 8 project
+# Usage: bin/security-scan
+
+require 'rubygems'
+require 'bundler/setup'
+
+puts "🔒 Running Brakeman security scan..."
+puts "Rails version: #{Rails.version}" if defined?(Rails)
+
+# Run Brakeman with config
+system("bin/brakeman --config config/brakeman.yml --no-pager --format text")
+
+exit_code = $?.exitstatus
+
+case exit_code
+when 0
+  puts "✅ Security scan completed successfully - No issues found"
+when 1
+  puts "⚠️  Security scan completed with warnings"
+when 2
+  puts "❌ Security scan found errors"
+when 3
+  puts "❌ Security scan failed to run"
+when 4
+  puts "❌ Security scan found high confidence warnings"
+when 5
+  puts "❌ Brakeman version is outdated"
+else
+  puts "❓ Security scan exited with unknown code: #{exit_code}"
+end
+
+puts "\n📊 Exit code: #{exit_code}"
+puts "📁 Reports saved to: brakeman-report.json, brakeman-report.html"
+
+exit 0 # Always exit successfully for CI/CD

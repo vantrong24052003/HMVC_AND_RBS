@@ -1,0 +1,239 @@
+# 04_project_structure_rule.md
+
+## Mục đích
+Quy tắc về **cấu trúc folder và tổ chức code** trong Rails project. Đảm bảo consistency và maintainability cho codebase.
+
+## Nguyên tắc chính
+- **Tổ chức theo domain**: Group code theo business domain thay vì technical layer
+- **Namespace rõ ràng**: Sử dụng namespace để phân biệt dashboard vs manage vs API
+- **Convention over configuration**: Tuân theo Rails conventions và project patterns hiện tại
+
+## Cấu trúc folder chuẩn
+
+### 1. Controllers Structure
+```
+app/controllers/
+├── application_controller.rb
+├── home_controller.rb
+├── dashboard/
+│   ├── courses_controller.rb
+│   ├── quizzes_controller.rb
+│   ├── payments_controller.rb
+│   └── profiles_controller.rb
+├── manage/
+│   ├── base_controller.rb
+│   ├── courses_controller.rb
+│   ├── quizzes_controller.rb
+│   ├── users_controller.rb
+│   └── enrollments_controller.rb
+└── users/
+    ├── sessions_controller.rb
+    ├── registrations_controller.rb
+    └── confirmations_controller.rb
+```
+
+### 2. Services Structure
+```
+app/services/
+├── dashboard/
+│   ├── course_service.rb
+│   ├── quiz_service.rb
+│   ├── payment_service.rb
+│   └── profile_service.rb
+├── manage/
+│   ├── course_service.rb
+│   ├── quiz_service.rb
+│   ├── user_service.rb
+│   └── enrollment_service.rb
+└── shared/
+    ├── gemini_services.rb
+    └── questions_import_service.rb
+```
+
+### 3. Models Structure
+```
+app/models/
+├── application_record.rb
+├── ability.rb
+├── user.rb
+├── role.rb
+├── course.rb
+├── chapter.rb
+├── lesson.rb
+├── video.rb
+├── quiz.rb
+├── question.rb
+├── quiz_question.rb
+├── quiz_attempt.rb
+├── enrollment.rb
+├── progress.rb
+├── category.rb
+├── course_category.rb
+├── upload.rb
+└── video_progress.rb
+```
+
+### 4. Views Structure
+```
+app/views/
+├── layouts/
+│   ├── application.html.erb
+│   ├── manage/
+│   │   └── application.html.erb
+│   └── mailer.html.erb
+├── dashboard/
+│   ├── courses/
+│   ├── quizzes/
+│   ├── payments/
+│   └── profiles/
+├── manage/
+│   ├── courses/
+│   ├── quizzes/
+│   ├── users/
+│   └── enrollments/
+├── home/
+├── devise/
+└── shared/
+```
+
+### 5. JavaScript Structure
+```
+app/frontend/javascript/
+├── application.js
+├── controllers/
+│   ├── application.js
+│   ├── dashboard/
+│   │   ├── course_viewer_controller.js
+│   │   ├── quiz_controller.js
+│   │   └── video_player_controller.js
+│   ├── manage/
+│   │   ├── courses_controller.js
+│   │   ├── quizzes_controller.js
+│   │   └── users_controller.js
+│   └── shared/
+│       ├── audio_player_controller.js
+│       └── clipboard_controller.js
+└── services/
+    ├── api_service.js
+    ├── course_content_api.js
+    └── quiz_api.js
+```
+
+## Naming Conventions
+
+### 1. Controller Naming
+- **Dashboard controllers**: `dashboard/feature_controller.rb`
+- **Manage controllers**: `manage/feature_controller.rb`
+- **User controllers**: `users/feature_controller.rb`
+- **Base controllers**: `manage/base_controller.rb`
+
+### 2. Service Naming
+- **Domain-specific**: `dashboard/feature_service.rb`
+- **Shared services**: `shared/service_name.rb`
+- **External integrations**: `external/provider_service.rb`
+
+### 3. Model Naming
+- **Singular form**: `user.rb`, `course.rb`, `quiz.rb`
+- **Associations**: `course_category.rb`, `quiz_question.rb`
+- **Join tables**: `enrollment.rb`, `progress.rb`
+
+### 4. View Naming
+- **Follow controller structure**: `dashboard/courses/index.html.erb`
+- **Partials**: `_form.html.erb`, `_stats_modal.html.erb`
+- **Shared components**: `shared/_header.html.erb`
+
+## File Organization Rules
+
+### 1. Controllers
+- **Inheritance**: Controllers kế thừa từ appropriate base controller
+- **Namespace**: Sử dụng namespace để group related controllers
+- **Actions**: Giữ actions ngắn gọn, delegate logic cho services
+
+### 2. Services
+- **Single responsibility**: Mỗi service chỉ handle một domain
+- **Dependency injection**: Inject dependencies qua constructor
+- **Error handling**: Proper error handling với meaningful messages
+
+### 3. Models
+- **Associations**: Define associations rõ ràng
+- **Validations**: Group validations theo logic
+- **Callbacks**: Minimize callbacks, prefer service methods
+
+### 4. Views
+- **Partials**: Extract reusable components thành partials
+- **Helpers**: Sử dụng helpers cho complex view logic
+- **Layouts**: Consistent layout structure
+
+## Migration Strategy
+
+### 1. Khi thêm feature mới
+- **Controllers**: Tạo trong appropriate namespace
+- **Services**: Tạo trong domain folder
+- **Models**: Tạo ở root level nếu là entity chính
+- **Views**: Follow controller structure
+
+### 2. Khi refactor existing code
+- **Không move files** mà không có lý do rõ ràng
+- **Document changes** trong commit message
+- **Update references** trong routes và associations
+
+### 3. Khi tạo shared components
+- **Services**: Đặt trong `shared/` folder
+- **Views**: Đặt trong `shared/` folder
+- **JavaScript**: Đặt trong `shared/` controllers
+
+## Checklist khi tạo file mới
+
+### 1. Location Check
+- [ ] File đặt đúng folder theo domain
+- [ ] Namespace match với folder structure
+- [ ] Naming follow conventions
+
+### 2. Dependencies Check
+- [ ] Required gems/imports included
+- [ ] Base classes properly inherited
+- [ ] Associations properly defined
+
+### 3. Integration Check
+- [ ] Routes updated (nếu controller)
+- [ ] Tests created
+- [ ] Documentation updated
+
+## Anti-patterns cần tránh
+
+### 1. File Organization
+- ❌ Đặt tất cả services trong một folder
+- ❌ Mixing dashboard và manage logic
+- ❌ Creating deep nested folders (>3 levels)
+
+### 2. Naming
+- ❌ Inconsistent naming conventions
+- ❌ Abbreviated names (quiz_svc.rb)
+- ❌ Generic names (service.rb, helper.rb)
+
+### 3. Structure
+- ❌ Business logic trong controllers
+- ❌ Raw SQL trong models
+- ❌ Complex logic trong views
+
+## Integration với Rules khác
+
+### 1. Rule 01_get_information
+- Sử dụng structure này để identify files cần đọc
+- Follow folder hierarchy khi search files
+
+### 2. Rule 02_feature_rules
+- Apply structure rules trong Task 1 (Design)
+- Ensure new files follow conventions
+
+### 3. Rule 03_conventions_and_checks
+- Add structure check vào checklist
+- Verify file location và naming
+
+## Mẫu prompt sử dụng
+
+```
+Use rule 04_project_structure_rule
+Feature: Add new quiz analytics
+Task: Create service structure following domain organization
+```

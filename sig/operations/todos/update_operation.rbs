@@ -1,0 +1,16 @@
+class Todos::UpdateOperation < ApplicationOperation
+  @form: Todos::UpdateForm
+  @todo: Todo
+
+  attr_reader form: Todos::UpdateForm
+
+  def call: () -> (nil | Todo)
+
+  private
+
+  def step_build_form: () { () -> void } -> (nil | Todo)
+
+  def step_update_todo: () -> Todo
+
+  def permit_params: () -> Hash[Symbol, untyped]
+end

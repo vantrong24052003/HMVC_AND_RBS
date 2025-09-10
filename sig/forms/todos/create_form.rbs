@@ -1,0 +1,8 @@
+class Todos::CreateForm < ApplicationForm
+  attr_accessor title: String
+  attr_accessor description: String
+  attr_accessor priority: String
+  attr_accessor status: String
+
+  def save: () -> bool
+end

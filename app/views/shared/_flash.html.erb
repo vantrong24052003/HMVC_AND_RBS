@@ -1,0 +1,24 @@
+<% if flash[:notice] %>
+  <div id="success-alert" class="w-full bg-green-500 text-white p-4 mb-4 flex justify-between items-center">
+    <span><%= flash[:notice] %></span>
+    <button onclick="document.getElementById('success-alert').style.display='none'" class="text-white hover:text-gray-200 text-xl font-bold">&times;</button>
+  </div>
+<% end %>
+
+<% if flash[:alert] %>
+  <div id="error-alert" class="w-full bg-red-500 text-white p-4 mb-4 flex justify-between items-center">
+    <span><%= flash[:alert] %></span>
+    <button onclick="document.getElementById('error-alert').style.display='none'" class="text-white hover:text-gray-200 text-xl font-bold">&times;</button>
+  </div>
+<% end %>
+
+<% if errors.any? %>
+  <div id="validation-alert" class="w-full bg-red-500 text-white p-4 mb-4 flex justify-between items-center">
+    <ul class="list-disc pl-5">
+      <% errors.each do |error| %>
+        <li><%= error %></li>
+      <% end %>
+    </ul>
+    <button onclick="document.getElementById('validation-alert').style.display='none'" class="text-white hover:text-gray-200 text-xl font-bold">&times;</button>
+  </div>
+<% end %>

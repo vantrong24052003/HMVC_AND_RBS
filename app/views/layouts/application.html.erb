@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Hmvc And Rbs" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="<%= vite_asset_path('logo.png') %>" type="image/png">
+    <link rel="icon" href="<%= vite_asset_path('icon.svg') %>" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="<%= vite_asset_path('logo.png') %>">
+
+  <%= vite_stylesheet_tag "application.css" %>
+  <%= vite_client_tag %>
+  <%= vite_javascript_tag 'javascript/application' %>
+  </head>
+
+  <body>
+    <%= render 'shared/flash', errors: [] %>
+    <%= yield %>
+  </body>
+</html>
