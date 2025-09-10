@@ -5,7 +5,7 @@ gem "bootsnap", require: false
 gem "devise"
 gem "enumerize", "2.8.1"
 gem "kamal", require: false
-gem "pg", "1.6.1"
+gem "pg", "1.6.2"
 gem "puma", "6.4.2"
 gem "rack-cors"
 gem "rails", "8.0.2"
