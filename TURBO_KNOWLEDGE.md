@@ -3,8 +3,8 @@
 ## Table of Contents
 - [Turbo Frame](#turbo-frame)
 - [Turbo Stream](#turbo-stream)
-- [Turbo Drive](#turbo-drive) *(Coming Soon)*
-- [Turbo Native](#turbo-native) *(Coming Soon)*
+- [Turbo Drive](#turbo-drive)
+- [Turbo Native](#turbo-native)
 
 ---
 
@@ -295,5 +295,77 @@ end
 
 ---
 
-## Turbo Native *(Coming Soon)*
-*Coming Soon*
+## Turbo Native
+
+### Khái niệm
+Turbo Native giúp dựng app iOS/Android sử dụng WebView + Turbo để tái dụng tối đa web UI, nhưng vẫn có cảm giác native (navigation bar, tab bar, push/present). App native điều khiển điều hướng; phần nội dung là trang web của bạn.
+
+### Kiến trúc tổng quát
+- App Native (iOS/Android) = Shell điều hướng + WebView
+- Turbo (Client) trong WebView vẫn hoạt động (Drive/Frame/Stream)
+- Turbo Native Bridge (iOS `turbo-ios`, Android `turbo-android`) kết nối điều hướng native với URL của web app
+
+### Thiết lập nhanh
+- iOS (Swift):
+  - Thêm dependency `Turbo` (CocoaPods/SPM)
+  - Tạo `Session` + `VisitableViewController`
+  - Định nghĩa `Navigator` để map URL → màn hình native hay web
+- Android (Kotlin):
+  - Thêm dependency `dev.hotwire:turbo-android`
+  - Tạo `TurboSession` + `TurboActivity`/`TurboFragment`
+  - Định nghĩa `Navigator` tương tự
+
+Pseudo iOS (rút gọn):
+```swift
+let session = Session(webView: WKWebView())
+session.delegate = self
+navigator.route(URL(string: "https://your.app")!)
+```
+
+Pseudo Android (rút gọn):
+```kotlin
+val session = TurboSession(this)
+session.navigator = AppNavigator(this)
+session.visit("https://your.app")
+```
+
+### Chiến lược điều hướng
+- Push (stack) vs Present (modal) do app native quyết định dựa trên URL
+- Quy ước URL để phân biệt:
+  - Web screens: `https://your.app/...`
+  - Native screens: custom scheme, ví dụ `yourapp://settings`
+- Có thể dùng `data-turbo-action="advance|replace"` trong web để gợi ý, nhưng app native luôn là nơi quyết định cuối cùng
+
+### Tương tác đặc biệt
+- Deep links: App nhận `yourapp://...` hoặc `https://your.app/...` → Navigator mở đúng màn hình
+- Auth session/cookies: Chia sẻ cookie giữa Safari/WebView (iOS cần cấu hình `WKWebsiteDataStore`); đảm bảo login web áp dụng trong WebView
+- File upload/camera: Bật quyền và bridge để WebView mở picker/camera; Android cần `WebChromeClient` phù hợp
+- Pull-to-refresh: Do app native cung cấp; WebView reload URL hiện tại
+- Offline/Errors: Intercept lỗi mạng → hiển thị native error screen, cho phép retry
+
+### Form & Redirect
+- Form trên web hoạt động bình thường với Turbo Drive
+- 422 (validation error): WebView nhận HTML và cập nhật phần body (giống web)
+- 3xx redirect: Giữ lịch sử điều hướng trong native stack
+
+### An toàn & Hiệu năng
+- Giới hạn origin được phép (App side) để tránh mở trang ngoài ý muốn
+- Bật cache của WebView hợp lý; cân nhắc Clear khi logout
+- Dùng `broadcast_*` (Turbo Stream) để realtime trong WebView như trên web
+
+### Debug & Logging
+- iOS: bật Web Inspector (Safari → Develop) để inspect WebView
+- Android: `setWebContentsDebuggingEnabled(true)` để dùng Chrome DevTools
+- Log lifecycle: visit started/completed, errors, redirects; đồng bộ với logs server
+
+### Khi nào nên dùng Turbo Native
+- Muốn xuất bản nhanh iOS/Android dựa trên web hiện có
+- UI web chiếm đa số, nhưng cần shell/native navigation, deep links, push notifications
+- Cần chia sẻ logic giao diện, realtime, forms giữa web và app
+
+### Lưu ý tích hợp với dự án hiện tại
+- Web đã dùng Turbo Drive/Frame/Stream → giữ nguyên
+- Thêm quy ước URL rõ ràng để App Navigator định tuyến (ví dụ tiền tố `/native/` hay scheme riêng)
+- Test: navigation stack, back/forward, modals, auth, upload, deep links, offline
+
+---
