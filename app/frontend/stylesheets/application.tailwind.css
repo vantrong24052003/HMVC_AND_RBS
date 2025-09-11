@@ -5,6 +5,7 @@
 @layer base {
   input[type="text"], input[type="email"], input[type="password"], textarea, select {
     @apply border-2 border-gray-300 rounded-md px-3 py-1 shadow-sm;
+    @apply bg-white text-gray-900;
     @apply focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none;
     @apply transition-all duration-200;
   }

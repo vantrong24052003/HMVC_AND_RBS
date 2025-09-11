@@ -4,7 +4,7 @@
 # Creator: trongdn2405@gmail.com
 
 class Todos::EditOperation < ApplicationOperation
-  attr_reader :form
+  attr_reader :form, :todo
 
   def call
     step_get_todo
@@ -13,7 +13,7 @@ class Todos::EditOperation < ApplicationOperation
   private
 
   def step_get_todo
-    @todo = Todo.find(params[:id])
+    @todo = Todo.includes(:tasks).find(params[:id])
     @form = Todos::EditForm.new(@todo.attributes)
   end
 end

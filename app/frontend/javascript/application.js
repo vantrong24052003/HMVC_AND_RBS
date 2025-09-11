@@ -1,10 +1,19 @@
 import { Application } from "@hotwired/stimulus"
 import Rails from "@rails/ujs"
 import "@hotwired/turbo-rails"
+import "./theme_detector"
+
+// Import Stimulus controllers
+import FlashController from "./controllers/flash_controller"
+import TaskController from "./controllers/task_controller"
 
 Rails.start()
 
 const application = Application.start()
+
+// Register Stimulus controllers
+application.register("flash", FlashController)
+application.register("task", TaskController)
 
 application.debug = false
 window.Stimulus = application

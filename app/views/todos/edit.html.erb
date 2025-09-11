@@ -1,27 +1,91 @@
 <%= render 'shared/flash', errors: @form&.errors&.full_messages || [] %>
 
-<%= form_with scope: :todo, url: todo_path(@form.id), method: :put, class: "space-y-4 w-[500px] border-2 border-gray-300 rounded-md p-4 mx-auto" do |f| %>
-  <div>
-    <%= f.label :title, class: "block text-sm font-medium text-gray-700" %>
-    <%= f.text_field :title, value: @form.title, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+<div class="max-w-4xl mx-auto p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Chỉnh sửa Todo</h1>
+    <%= link_to "Quay lại", todos_path, class: "bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded font-medium" %>
   </div>
-  <div>
-    <%= f.label :description, class: "block text-sm font-medium text-gray-700" %>
-    <%= f.text_field :description, value: @form.description, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
-  </div>
-  <div>
-    <%= f.label :priority, class: "block text-sm font-medium text-gray-700" %>
-    <%= f.select :priority,
-        options_for_select([['Low', 'low'], ['Medium', 'medium'], ['High', 'high']], @form.priority),
-        {},
-        class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
-  </div>
-  <div>
-    <%= f.label :status, class: "block text-sm font-medium text-gray-700" %>
-    <%= f.select :status,
-        options_for_select([['Pending', 'pending'], ['Progress', 'progress'], ['Done', 'done']], @form.status),
-        {},
-        class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
-  </div>
-  <%= f.submit "Update", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
-<% end %>
+
+  <%= form_with scope: :todo, url: todo_path(@todo.id), method: :put, class: "space-y-4 bg-white p-6 rounded-lg shadow border" do |f| %>
+    <div>
+      <%= f.label :title, "Tiêu đề", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.text_field :title, value: @form.title, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" %>
+    </div>
+
+    <div>
+      <%= f.label :description, "Mô tả", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.text_field :description, value: @form.description, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" %>
+    </div>
+
+    <div>
+      <%= f.label :priority, "Độ ưu tiên", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.select :priority,
+          options_for_select([["Low", "low"], ["Medium", "medium"], ["High", "high"]], @form.priority),
+          {},
+          class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" %>
+    </div>
+
+    <div>
+      <%= f.label :status, "Trạng thái", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.select :status,
+          options_for_select([["Pending", "pending"], ["Progress", "progress"], ["Done", "done"]], @form.status),
+          {},
+          class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" %>
+    </div>
+
+            <div class="mt-6 border-t border-gray-200 pt-4" data-controller="task">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold">Tasks</h3>
+                <button type="button" data-action="click->task#addTask" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-sm font-medium">
+                  Thêm Task
+                </button>
+              </div>
+
+              <div data-task-target="list" class="space-y-4">
+        <% @todo.tasks.each_with_index do |task, index| %>
+          <div class="border border-gray-200 bg-gray-50 rounded-md p-4 task-item" data-task-index="<%= index %>">
+            <input type="hidden" name="todo[tasks_attributes][<%= index %>][id]" value="<%= task.id %>">
+            <div class="flex justify-between items-start mb-3">
+              <h4 class="text-sm font-medium text-gray-700">Task #<%= index + 1 %></h4>
+              <button type="button" data-action="click->task#removeTask" class="text-red-600 hover:text-red-800 text-sm font-medium">
+                Xóa
+              </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Tiêu đề</label>
+                <input type="text" name="todo[tasks_attributes][<%= index %>][title]" value="<%= task.title %>" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
+                <input type="text" name="todo[tasks_attributes][<%= index %>][description]" value="<%= task.description %>" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Độ ưu tiên</label>
+                <select name="todo[tasks_attributes][<%= index %>][priority]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                  <option value="0" <%= 'selected' if task.priority == 0 %>>Low</option>
+                  <option value="1" <%= 'selected' if task.priority == 1 %>>Medium</option>
+                  <option value="2" <%= 'selected' if task.priority == 2 %>>High</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
+                <select name="todo[tasks_attributes][<%= index %>][status]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                  <option value="0" <%= 'selected' if task.status == 0 %>>Pending</option>
+                  <option value="1" <%= 'selected' if task.status == 1 %>>Progress</option>
+                  <option value="2" <%= 'selected' if task.status == 2 %>>Done</option>
+                </select>
+              </div>
+            </div>
+            <input type="hidden" name="todo[tasks_attributes][<%= index %>][_destroy]" value="0">
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="flex space-x-3">
+      <%= f.submit "Cập nhật", class: "bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded font-medium" %>
+      <%= link_to "Hủy", todos_path, class: "bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded font-medium" %>
+    </div>
+  <% end %>
+</div>

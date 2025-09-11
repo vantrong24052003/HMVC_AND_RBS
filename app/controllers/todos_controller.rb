@@ -49,6 +49,7 @@ class TodosController < ApplicationController
     operator.call
 
     @form = operator.form
+    @todo = operator.todo
   end
 
   # [PUT]...
@@ -56,9 +57,13 @@ class TodosController < ApplicationController
     operator = Todos::UpdateOperation.new(params)
     operator.call
     @form = operator.form
-    return render :new, status: :unprocessable_entity if @form.errors.present?
+    @todo = operator.todo
+    return render :edit, status: :unprocessable_entity if @form.errors.present?
 
-    redirect_to todos_path, notice: "Todo updated successfully"
+    respond_to do |format|
+      format.html { redirect_to todos_path, notice: "Todo updated successfully" }
+      format.turbo_stream { redirect_to todos_path, notice: "Todo updated successfully" }
+    end
   end
 
   # [DELETE]...

@@ -8,7 +8,7 @@ module.exports = {
     "./app/frontend/**/*.jsx",
     "./app/frontend/**/*.tsx",
   ],
-  darkMode: "class",
+  darkMode: "media",
   theme: {
     extend: {
       animation: {

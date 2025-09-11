@@ -3,7 +3,7 @@
 # Created at: 2025-08-31 06:34 +0700
 # Creator: trongdn2405@gmail.com
 
-class Todos::EditForm < ApplicationForm
+class Tasks::EditForm < ApplicationForm
   attribute :id, :integer
   attribute :title, :string
   attribute :description, :string
@@ -11,7 +11,8 @@ class Todos::EditForm < ApplicationForm
   attribute :status, :string
   attribute :created_at, :datetime
   attribute :updated_at, :datetime
-  attribute :tasks_attributes, :string
+
+  attribute :tasks_attributes
 
   validates :title, presence: true
   validates :description, presence: true
