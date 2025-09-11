@@ -13,6 +13,6 @@ class Todos::ShowOperation < ApplicationOperation
   private
 
   def step_get_todo
-    @form = Todo.find(params[:id])
+    @form = Todo.includes(:tasks).find(params[:id])
   end
 end

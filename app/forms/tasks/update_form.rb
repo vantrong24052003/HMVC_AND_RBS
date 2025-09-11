@@ -3,7 +3,8 @@
 # Created at: 2025-08-31 06:34 +0700
 # Creator: trongdn2405@gmail.com
 
-class Todos::UpdateForm < ApplicationForm
+class Tasks::UpdateForm < ApplicationForm
+  attribute :id, :integer
   attribute :title, :string
   attribute :description, :string
   attribute :priority, :string

@@ -14,7 +14,8 @@ class Todos::UpdateOperation < ApplicationOperation
   private
 
   def step_build_form
-    @form = Todos::UpdateForm.new(permit_params)
+    binding.irb
+    @form = Todos::UpdateForm.new(permit_params.except(:tasks_attributes))
     return if @form.valid?
 
     yield
@@ -22,10 +23,20 @@ class Todos::UpdateOperation < ApplicationOperation
 
   def step_update_todo
     @todo = Todo.find(params[:id])
-    @todo.update(@form.attributes)
+    payload = @form.attributes
+    if permit_params[:tasks_attributes].present?
+      payload[:tasks_attributes] = permit_params[:tasks_attributes]
+    end
+    @todo.update(payload)
   end
 
   def permit_params
-    params.require(:todo).permit(:title, :description, :priority, :status)
+    params.require(:todo).permit(
+      :title,
+      :description,
+      :priority,
+      :status,
+      tasks_attributes: [:id, :title, :description, :priority, :status, :_destroy]
+    )
   end
 end

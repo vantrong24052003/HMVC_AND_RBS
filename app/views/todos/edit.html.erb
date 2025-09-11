@@ -1,6 +1,6 @@
 <%= render 'shared/flash', errors: @form&.errors&.full_messages || [] %>
 
-<%= form_with scope: :todo, url: todo_path(@form.id), method: :put, class: "space-y-4 w-[500px] border-2 border-gray-300 rounded-md p-4 mx-auto" do |f| %>
+<%= form_with scope: :todo, url: todo_path(@form.id), method: :put, class: "space-y-4 w-[700px] border-2 border-gray-300 rounded-md p-4 mx-auto" do |f| %>
   <div>
     <%= f.label :title, class: "block text-sm font-medium text-gray-700" %>
     <%= f.text_field :title, value: @form.title, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
@@ -12,16 +12,106 @@
   <div>
     <%= f.label :priority, class: "block text-sm font-medium text-gray-700" %>
     <%= f.select :priority,
-        options_for_select([['Low', 'low'], ['Medium', 'medium'], ['High', 'high']], @form.priority),
+        options_for_select([["Low", "low"], ["Medium", "medium"], ["High", "high"]], @form.priority),
         {},
         class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
   </div>
   <div>
     <%= f.label :status, class: "block text-sm font-medium text-gray-700" %>
     <%= f.select :status,
-        options_for_select([['Pending', 'pending'], ['Progress', 'progress'], ['Done', 'done']], @form.status),
+        options_for_select([["Pending", "pending"], ["Progress", "progress"], ["Done", "done"]], @form.status),
         {},
         class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
   </div>
+
+  <div class="mt-6 border-t pt-4">
+    <div class="flex items-center justify-between">
+      <h3 class="text-lg font-semibold text-gray-900">Tasks</h3>
+      <%= link_to "Add Task", "#", id: "add-task", class: "text-blue-600 hover:text-blue-800" %>
+    </div>
+
+    <div id="tasks-list" class="space-y-4 mt-4">
+      <% f.fields_for :tasks do |ff| %>
+        <div class="border rounded-md p-3">
+          <%= ff.hidden_field :id %>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <%= ff.label :title, class: "block text-sm font-medium text-gray-700" %>
+              <%= ff.text_field :title, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+            </div>
+            <div>
+              <%= ff.label :description, class: "block text-sm font-medium text-gray-700" %>
+              <%= ff.text_field :description, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+            </div>
+            <div>
+              <%= ff.label :priority, class: "block text-sm font-medium text-gray-700" %>
+              <%= ff.select :priority, options_for_select([["Low", 0], ["Medium", 1], ["High", 2]]), {}, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+            </div>
+            <div>
+              <%= ff.label :status, class: "block text-sm font-medium text-gray-700" %>
+              <%= ff.select :status, options_for_select([["Pending", 0], ["Progress", 1], ["Done", 2]]), {}, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+            </div>
+          </div>
+          <div class="mt-2">
+            <label class="inline-flex items-center">
+              <%= ff.check_box :_destroy %>
+              <span class="ml-2 text-sm text-red-600">Remove this task</span>
+            </label>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
   <%= f.submit "Update", class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
 <% end %>
+
+<script>
+  document.addEventListener("turbo:load", function() {
+    var addBtn = document.getElementById("add-task");
+    var list = document.getElementById("tasks-list");
+    if (!addBtn || !list) { return; }
+
+    addBtn.addEventListener("click", function(e) {
+      e.preventDefault();
+      var idx = list.children.length;
+      var html = `
+        <div class="border rounded-md p-3">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Title</label>
+              <input class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" type="text" name="todo[tasks_attributes][${idx}][title]">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Description</label>
+              <input class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" type="text" name="todo[tasks_attributes][${idx}][description]">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Priority</label>
+              <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" name="todo[tasks_attributes][${idx}][priority]">
+                <option value="0">Low</option>
+                <option value="1">Medium</option>
+                <option value="2">High</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Status</label>
+              <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" name="todo[tasks_attributes][${idx}][status]">
+                <option value="0">Pending</option>
+                <option value="1">Progress</option>
+                <option value="2">Done</option>
+              </select>
+            </div>
+          </div>
+          <div class="mt-2">
+            <label class="inline-flex items-center">
+              <input type="checkbox" name="todo[tasks_attributes][${idx}][_destroy]">
+              <span class="ml-2 text-sm text-red-600">Remove this task</span>
+            </label>
+          </div>
+        </div>
+      `;
+      list.insertAdjacentHTML("beforeend", html);
+    });
+  });
+</script>

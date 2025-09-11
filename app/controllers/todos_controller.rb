@@ -49,6 +49,7 @@ class TodosController < ApplicationController
     operator.call
 
     @form = operator.form
+    @todo = operator.todo
   end
 
   # [PUT]...
