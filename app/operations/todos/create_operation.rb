@@ -21,7 +21,7 @@ class Todos::CreateOperation < ApplicationOperation
   end
 
   def step_create_todo
-    @todo = Todo.new(form.attributes)
+    @todo = Todo.new(@form.attributes)
     @todo.save
   end
 

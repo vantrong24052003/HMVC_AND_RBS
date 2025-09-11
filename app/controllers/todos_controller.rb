@@ -65,17 +65,10 @@ class TodosController < ApplicationController
   def destroy
       operator = Todos::DestroyOperation.new(params)
       operator.call
-      @todo = operator.todo
 
       respond_to do |format|
         format.html { redirect_to todos_path, notice: "Todo deleted successfully" }
-        format.turbo_stream do
-          flash.now[:notice] = "Todo deleted successfully"
-          render turbo_stream: [
-            turbo_stream.remove(@todo),
-            turbo_stream.update("flash", partial: "shared/flash", locals: { errors: [] })
-          ]
-        end
+        format.turbo_stream { redirect_to todos_path, notice: "Todo deleted successfully" }
       end
   end
 end

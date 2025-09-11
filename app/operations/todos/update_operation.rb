@@ -22,7 +22,7 @@ class Todos::UpdateOperation < ApplicationOperation
 
   def step_update_todo
     @todo = Todo.find(params[:id])
-    @todo.update(permit_params)
+    @todo.update(@form.attributes)
   end
 
   def permit_params
