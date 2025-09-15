@@ -35,7 +35,7 @@ class Todos::UpdateOperation < ApplicationOperation
   def permit_params
     params.require(:todo).permit(
       :title, :description, :priority, :status, :limit, :started_at,
-      tasks_attributes: [ :id, :title, :description, :priority, :status, :_destroy ]
+      tasks_attributes: [ :id, :title, :description, :priority, :status, :duration_minutes, :_destroy ]
     )
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_15_044318) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_15_071000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -22,8 +22,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_15_044318) do
     t.bigint "todo_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "due_at", comment: "Deadline riêng cho task (không bắt buộc)"
-    t.index ["due_at"], name: "index_tasks_on_due_at"
+    t.integer "duration_minutes", comment: "Per-task allocated minutes within parent todo limit"
     t.index ["todo_id"], name: "index_tasks_on_todo_id"
   end
 

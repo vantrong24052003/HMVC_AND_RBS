@@ -6,6 +6,7 @@ class Todo < ApplicationRecord
   enumerize :status, in: { pending: 0, progress: 1, done: 2 }
 
   validates :limit, numericality: { greater_than: 0 }, allow_nil: true
+  validate :validate_total_task_duration_within_limit
 
   before_save :set_expired_at, if: -> { started_at_changed? || limit_changed? }
 
@@ -28,6 +29,15 @@ class Todo < ApplicationRecord
       self.expired_at = started_at + limit.minutes
     else
       self.expired_at = nil
+    end
+  end
+
+  def validate_total_task_duration_within_limit
+    return if limit.blank? || limit.to_i <= 0 || tasks.blank?
+
+    total = tasks.reject(&:marked_for_destruction?).sum { |t| t.duration_minutes.to_i }
+    if total > limit.to_i
+      errors.add(:base, "Tổng thời lượng tasks (#{total} phút) vượt giới hạn todo (#{limit} phút)")
     end
   end
 
