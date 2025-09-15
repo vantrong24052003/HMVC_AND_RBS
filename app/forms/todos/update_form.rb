@@ -10,6 +10,7 @@ class Todos::UpdateForm < ApplicationForm
   attribute :status, :string
   attribute :limit, :integer
   attribute :started_at, :datetime
+  attribute :schedules
 
   validates :title, presence: true
   validates :description, presence: true

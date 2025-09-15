@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_15_071000) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_15_090000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -22,7 +22,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_15_071000) do
     t.bigint "todo_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "duration_minutes", comment: "Per-task allocated minutes within parent todo limit"
+    t.integer "duration_minutes"
     t.index ["todo_id"], name: "index_tasks_on_todo_id"
   end
 
@@ -33,9 +33,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_15_071000) do
     t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "limit", comment: "Số phút giới hạn cho todo"
-    t.datetime "expired_at", comment: "Thời gian hết hạn của todo"
+    t.integer "limit"
+    t.datetime "expired_at"
     t.datetime "started_at"
+    t.json "schedules"
     t.index ["expired_at"], name: "index_todos_on_expired_at"
   end
 

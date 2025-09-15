@@ -8,6 +8,7 @@ class Todo < ApplicationRecord
   validates :limit, numericality: { greater_than: 0 }, allow_nil: true
   validate :validate_total_task_duration_within_limit
 
+  before_validation :normalize_weekday
   before_save :set_expired_at, if: -> { started_at_changed? || limit_changed? }
 
   scope :expired, -> { where("expired_at <= ?", Time.zone.now) }
@@ -25,11 +26,8 @@ class Todo < ApplicationRecord
   private
 
   def set_expired_at
-    if limit.present? && started_at.present?
-      self.expired_at = started_at + limit.minutes
-    else
-      self.expired_at = nil
-    end
+    return self.expired_at = started_at + limit.minutes if limit.present? && started_at.present?
+    self.expired_at = nil
   end
 
   def validate_total_task_duration_within_limit
@@ -38,6 +36,25 @@ class Todo < ApplicationRecord
     total = tasks.reject(&:marked_for_destruction?).sum { |t| t.duration_minutes.to_i }
     if total > limit.to_i
       errors.add(:base, "Tổng thời lượng tasks (#{total} phút) vượt giới hạn todo (#{limit} phút)")
+    end
+  end
+
+  WEEKDAY_INDEX = { "sunday" => 0, "monday" => 1, "tuesday" => 2, "wednesday" => 3, "thursday" => 4, "friday" => 5, "saturday" => 6 }.freeze
+
+  def normalize_weekday
+    return if schedules.blank? || schedules["interval"] != "weekly"
+
+    value = schedules["weekday"]
+    if value.blank?
+      errors.add(:schedules, "weekday is required for weekly schedule")
+      return
+    end
+
+    idx = WEEKDAY_INDEX[value.to_s.downcase]
+    if idx.nil?
+      errors.add(:schedules, "weekday invalid")
+    else
+      schedules["weekday"] = idx
     end
   end
 

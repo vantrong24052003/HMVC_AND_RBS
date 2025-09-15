@@ -87,6 +87,27 @@
         </div>
       </div>
 
+      <!-- Lịch -->
+      <% if @form.schedules.present? %>
+      <div class="mt-6 pt-6 border-t border-gray-200">
+        <h2 class="text-lg font-semibold mb-4">Lịch</h2>
+        <div class="space-y-2">
+          <% if @form.schedules["interval"].present? %>
+            <p><strong>Loại:</strong> <%= @form.schedules["interval"] %></p>
+          <% end %>
+          <% if @form.schedules["hour"].present? || @form.schedules["minute"].present? %>
+            <p><strong>Giờ:</strong> <%= "#{@form.schedules["hour"] || 0}:#{(@form.schedules["minute"] || 0).to_s.rjust(2, '0')}" %></p>
+          <% end %>
+          <% if @form.schedules["weekday"].present? %>
+            <p><strong>Thứ:</strong> <%= @form.schedules["weekday"] %></p>
+          <% end %>
+          <% if @form.schedules["day"].present? %>
+            <p><strong>Ngày:</strong> <%= @form.schedules["day"] %></p>
+          <% end %>
+        </div>
+      </div>
+      <% end %>
+
       <!-- Danh sách Tasks -->
       <div class="mt-8 pt-6 border-t border-gray-200">
         <h2 class="text-lg font-semibold mb-4">Tasks</h2>

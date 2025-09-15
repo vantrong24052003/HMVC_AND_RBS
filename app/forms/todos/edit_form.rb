@@ -12,6 +12,7 @@ class Todos::EditForm < ApplicationForm
   attribute :limit, :integer
   attribute :started_at, :datetime
   attribute :expired_at, :datetime
+  attribute :schedules
   attribute :created_at, :datetime
   attribute :updated_at, :datetime
   attribute :tasks_attributes, :string
