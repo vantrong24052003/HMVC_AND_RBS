@@ -6,6 +6,7 @@ import "./theme_detector"
 // Import Stimulus controllers
 import FlashController from "./controllers/flash_controller"
 import TaskController from "./controllers/task_controller"
+import TodoFormController from "./controllers/todo_form_controller"
 
 Rails.start()
 
@@ -14,6 +15,7 @@ const application = Application.start()
 // Register Stimulus controllers
 application.register("flash", FlashController)
 application.register("task", TaskController)
+application.register("todo-form", TodoFormController)
 
 application.debug = false
 window.Stimulus = application

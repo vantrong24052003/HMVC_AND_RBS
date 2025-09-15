@@ -20,8 +20,8 @@
               <p class="text-gray-700"><%= @form.description %></p>
             </div>
             <div class="flex space-x-4 text-sm text-gray-500">
-              <span>Ngày tạo: <%= @form.created_at.strftime("%d/%m/%Y %H:%M") %></span>
-              <span>Cập nhật: <%= @form.updated_at.strftime("%d/%m/%Y %H:%M") %></span>
+              <span>Ngày tạo: <%= @form.created_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></span>
+              <span>Cập nhật: <%= @form.updated_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></span>
             </div>
           </div>
         </div>
@@ -52,6 +52,38 @@
               </span>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Thông tin thời gian -->
+      <div class="mt-6 pt-6 border-t border-gray-200">
+        <h2 class="text-lg font-semibold mb-4">Thông tin thời gian</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <% if @form.limit.present? %>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Thời gian giới hạn</label>
+            <p class="text-gray-900"><%= @form.limit %> phút</p>
+          </div>
+          <% end %>
+
+          <% if @form.started_at.present? %>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Thời gian bắt đầu</label>
+            <p class="text-gray-900"><%= @form.started_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></p>
+          </div>
+          <% end %>
+
+          <% if @form.expired_at.present? %>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Thời gian hết hạn</label>
+            <p class="text-gray-900 <%= 'text-red-600 font-semibold' if @form.expired? %>">
+              <%= @form.expired_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %>
+              <% if @form.expired? %>
+                <span class="text-red-500">(Đã hết hạn)</span>
+              <% end %>
+            </p>
+          </div>
+          <% end %>
         </div>
       </div>
 

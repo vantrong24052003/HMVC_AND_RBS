@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_30_235243) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_15_044318) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -22,6 +22,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_30_235243) do
     t.bigint "todo_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "due_at", comment: "Deadline riêng cho task (không bắt buộc)"
+    t.index ["due_at"], name: "index_tasks_on_due_at"
     t.index ["todo_id"], name: "index_tasks_on_todo_id"
   end
 
@@ -32,6 +34,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_30_235243) do
     t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "limit", comment: "Số phút giới hạn cho todo"
+    t.datetime "expired_at", comment: "Thời gian hết hạn của todo"
+    t.datetime "started_at"
+    t.index ["expired_at"], name: "index_todos_on_expired_at"
   end
 
   add_foreign_key "tasks", "todos"

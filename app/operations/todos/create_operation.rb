@@ -26,6 +26,6 @@ class Todos::CreateOperation < ApplicationOperation
   end
 
   def permit_params
-    params.require(:todo).permit(:title, :description, :priority, :status)
+    params.require(:todo).permit(:title, :description, :priority, :status, :limit, :started_at)
   end
 end
