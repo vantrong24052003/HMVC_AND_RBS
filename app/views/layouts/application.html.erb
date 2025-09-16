@@ -21,6 +21,9 @@
   </head>
 
   <body class="min-h-screen bg-gray-100 text-gray-900">
+    <div class="fixed top-4 right-4 z-50">
+      <%= render 'shared/language_switcher' %>
+    </div>
     <div id="flash">
       <%= render 'shared/flash', errors: [] %>
     </div>

@@ -1,7 +1,7 @@
 <%= turbo_frame_tag "todo_details_frame" do %>
   <div class="max-w-4xl mx-auto p-6">
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold">Chi tiết Todo</h1>
+      <h1 class="text-2xl font-bold"><%= t('todos.show.title') %></h1>
     </div>
 
     <div class="bg-white rounded-lg shadow-sm border">
@@ -9,46 +9,46 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Thông tin cơ bản -->
         <div>
-          <h2 class="text-lg font-semibold mb-4">Thông tin cơ bản</h2>
+          <h2 class="text-lg font-semibold mb-4"><%= t('todos.show.basic_info') %></h2>
           <div class="space-y-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Tiêu đề</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1"><%= Todo.human_attribute_name(:title) %></label>
               <p class="text-lg text-gray-900"><%= @form.title %></p>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1"><%= Todo.human_attribute_name(:description) %></label>
               <p class="text-gray-700"><%= @form.description %></p>
             </div>
             <div class="flex space-x-4 text-sm text-gray-500">
-              <span>Ngày tạo: <%= @form.created_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></span>
-              <span>Cập nhật: <%= @form.updated_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></span>
+              <span><%= t('todos.show.created_at') %>: <%= @form.created_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></span>
+              <span><%= t('todos.show.updated_at') %>: <%= @form.updated_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></span>
             </div>
           </div>
         </div>
 
         <div>
-          <h2 class="text-lg font-semibold mb-4">Trạng thái & Ưu tiên</h2>
+          <h2 class="text-lg font-semibold mb-4"><%= t('todos.show.status_priority') %></h2>
           <div class="space-y-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Độ ưu tiên</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1"><%= Todo.human_attribute_name(:priority) %></label>
               <span class="px-3 py-1 text-sm font-medium rounded-full
                 <%= case @form.priority
                     when 'low' then 'bg-green-100 text-green-800'
                     when 'medium' then 'bg-yellow-100 text-yellow-800'
                     when 'high' then 'bg-red-100 text-red-800'
                     end %>">
-                <%= @form.priority %>
+                <%= @form.priority.text %>
               </span>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1"><%= Todo.human_attribute_name(:status) %></label>
               <span class="px-3 py-1 text-sm font-medium rounded-full
                 <%= case @form.status
                     when 'pending' then 'bg-gray-100 text-gray-800'
                     when 'progress' then 'bg-blue-100 text-blue-800'
                     when 'done' then 'bg-green-100 text-green-800'
                     end %>">
-                <%= @form.status %>
+                <%= @form.status.text %>
               </span>
             </div>
           </div>
@@ -57,29 +57,29 @@
 
       <!-- Thông tin thời gian -->
       <div class="mt-6 pt-6 border-t border-gray-200">
-        <h2 class="text-lg font-semibold mb-4">Thông tin thời gian</h2>
+        <h2 class="text-lg font-semibold mb-4"><%= t('todos.show.time_info') %></h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <% if @form.limit.present? %>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Thời gian giới hạn</label>
-            <p class="text-gray-900"><%= @form.limit %> phút</p>
+            <label class="block text-sm font-medium text-gray-700 mb-1"><%= t('todos.show.time_limit') %></label>
+            <p class="text-gray-900"><%= @form.limit %> <%= t('todos.show.minutes') %></p>
           </div>
           <% end %>
 
           <% if @form.started_at.present? %>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Thời gian bắt đầu</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1"><%= t('todos.show.started_at') %></label>
             <p class="text-gray-900"><%= @form.started_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %></p>
           </div>
           <% end %>
 
           <% if @form.expired_at.present? %>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Thời gian hết hạn</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1"><%= t('todos.show.expired_at') %></label>
             <p class="text-gray-900 <%= 'text-red-600 font-semibold' if @form.expired? %>">
               <%= @form.expired_at.in_time_zone.strftime("%d/%m/%Y %H:%M") %>
               <% if @form.expired? %>
-                <span class="text-red-500">(Đã hết hạn)</span>
+                <span class="text-red-500">(<%= t('todos.show.expired') %>)</span>
               <% end %>
             </p>
           </div>
@@ -90,7 +90,7 @@
       <!-- Lịch -->
       <% if @form.schedules.present? %>
       <div class="mt-6 pt-6 border-t border-gray-200">
-        <h2 class="text-lg font-semibold mb-4">Lịch</h2>
+        <h2 class="text-lg font-semibold mb-4"><%= t('todos.show.schedule') %></h2>
         <div class="space-y-2">
           <% if @form.schedules["interval"].present? %>
             <p><strong>Loại:</strong> <%= @form.schedules["interval"] %></p>
@@ -110,17 +110,17 @@
 
       <!-- Danh sách Tasks -->
       <div class="mt-8 pt-6 border-t border-gray-200">
-        <h2 class="text-lg font-semibold mb-4">Tasks</h2>
+        <h2 class="text-lg font-semibold mb-4"><%= t('todos.show.tasks') %></h2>
 
         <% if @form.tasks.any? %>
           <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-50">
                 <tr>
-                  <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Tiêu đề</th>
-                  <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Mô tả</th>
-                  <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Ưu tiên</th>
-                  <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Trạng thái</th>
+                  <th class="px-4 py-3 text-left text-sm font-medium text-gray-700"><%= Task.human_attribute_name(:title) %></th>
+                  <th class="px-4 py-3 text-left text-sm font-medium text-gray-700"><%= Task.human_attribute_name(:description) %></th>
+                  <th class="px-4 py-3 text-left text-sm font-medium text-gray-700"><%= Task.human_attribute_name(:priority) %></th>
+                  <th class="px-4 py-3 text-left text-sm font-medium text-gray-700"><%= Task.human_attribute_name(:status) %></th>
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
@@ -135,7 +135,7 @@
                             when 'medium' then 'bg-yellow-100 text-yellow-800'
                             when 'high' then 'bg-red-100 text-red-800'
                             end %>">
-                        <%= task.priority %>
+                        <%= task.priority.text %>
                       </span>
                     </td>
                     <td class="px-4 py-4">
@@ -145,7 +145,7 @@
                             when 'progress' then 'bg-blue-100 text-blue-800'
                             when 'done' then 'bg-green-100 text-green-800'
                             end %>">
-                        <%= task.status %>
+                        <%= task.status.text %>
                       </span>
                     </td>
                   </tr>
@@ -154,7 +154,7 @@
             </table>
           </div>
         <% else %>
-          <p class="text-gray-600">Chưa có task nào. Bấm "Chỉnh sửa" để thêm.</p>
+          <p class="text-gray-600"><%= t('todos.show.no_tasks') %></p>
         <% end %>
       </div>
     </div>

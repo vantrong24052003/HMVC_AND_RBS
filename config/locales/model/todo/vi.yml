@@ -1,0 +1,63 @@
+vi:
+  activerecord:
+    models:
+      todo: "Công việc"
+      task: "Nhiệm vụ"
+    attributes:
+      todo:
+        title: "Tiêu đề"
+        description: "Mô tả"
+        priority: "Độ ưu tiên"
+        status: "Trạng thái"
+        limit: "Thời gian giới hạn"
+        started_at: "Thời gian bắt đầu"
+        expired_at: "Thời gian hết hạn"
+        schedules: "Lịch thực hiện"
+      attribute_values:
+        todo:
+          schedule:
+            daily: "Hàng ngày lúc %{hour}:%{minute}"
+            weekly: "Hàng tuần vào %{day} lúc %{hour}:%{minute}"
+            monthly: "Hàng tháng ngày %{day} lúc %{hour}:%{minute}"
+          day_name:
+            "0": "Chủ nhật"
+            "1": "Thứ hai"
+            "2": "Thứ ba"
+            "3": "Thứ tư"
+            "4": "Thứ năm"
+            "5": "Thứ sáu"
+            "6": "Thứ bảy"
+    errors:
+      models:
+        todo:
+          attributes:
+            base:
+              total_task_duration_exceeds_limit: "Tổng thời lượng tasks (%{total} phút) vượt giới hạn todo (%{limit} phút)"
+            schedules:
+              weekday_required: "weekday is required for weekly schedule"
+              weekday_invalid: "weekday invalid"
+      task:
+        title: "Tiêu đề"
+        description: "Mô tả"
+        priority: "Độ ưu tiên"
+        status: "Trạng thái"
+        duration_minutes: "Thời lượng"
+    enums:
+      todo:
+        priority:
+          low: "Thấp"
+          medium: "Trung bình"
+          high: "Cao"
+        status:
+          pending: "Chờ xử lý"
+          progress: "Đang thực hiện"
+          done: "Hoàn thành"
+      task:
+        priority:
+          low: "Thấp"
+          medium: "Trung bình"
+          high: "Cao"
+        status:
+          pending: "Chờ xử lý"
+          progress: "Đang thực hiện"
+          done: "Hoàn thành"
