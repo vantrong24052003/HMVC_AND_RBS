@@ -1,5 +1,6 @@
 class Todo < ApplicationRecord
   has_many :tasks, dependent: :destroy
+  has_many :todo_jobs, dependent: :destroy
   accepts_nested_attributes_for :tasks, allow_destroy: true
 
   enumerize :priority, in: { low: 0, medium: 1, high: 2 }, i18n_scope: 'activerecord.enums.todo.priority'
