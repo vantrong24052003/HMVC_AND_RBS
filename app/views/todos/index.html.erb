@@ -1,7 +1,7 @@
 <div class="max-w-4xl mx-auto p-6">
   <div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold">Danh sách Todos</h1>
-    <%= link_to "Thêm Todo", new_todo_path, class: "bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded text-lg font-medium" %>
+    <h1 class="text-2xl font-bold"><%= t('todos.index.title') %></h1>
+    <%= link_to t('todos.index.new_todo'), new_todo_path, class: "bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded text-lg font-medium" %>
   </div>
 
   <div class="bg-white rounded-lg shadow-sm border">
@@ -9,19 +9,19 @@
       <thead class="bg-gray-50">
         <tr>
           <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">
-            Tiêu đề
+            <%= t('todos.index.table.title') %>
           </th>
           <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">
-            Mô tả
+            <%= t('todos.index.table.description') %>
           </th>
           <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">
-            Độ ưu tiên
+            <%= t('todos.index.table.priority') %>
           </th>
           <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">
-            Trạng thái
+            <%= t('todos.index.table.status') %>
           </th>
           <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">
-            Thao tác
+            <%= t('todos.index.table.actions') %>
           </th>
         </tr>
       </thead>
@@ -47,7 +47,7 @@
                     when 'medium' then 'bg-yellow-100 text-yellow-800'
                     when 'high' then 'bg-red-100 text-red-800'
                     end %>">
-                <%= todo.priority %>
+                <%= todo.priority.text %>
               </span>
             </td>
             <td class="px-4 py-4">
@@ -57,25 +57,25 @@
                     when 'progress' then 'bg-blue-100 text-blue-800'
                     when 'done' then 'bg-green-100 text-green-800'
                     end %>">
-                <%= todo.status %>
+                <%= todo.status.text %>
               </span>
             </td>
             <td class="px-4 py-4">
               <div class="flex space-x-2">
                 <%= link_to edit_todo_path(todo), class: "bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded text-sm font-medium" do %>
-                  Sửa
-                <% end %>
-                
-                <%= link_to todo_path(todo),
-                    data: { turbo_frame: "todo_details_frame", turbo_action: "replace" },
-                    class: "bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-sm font-medium" do %>
-                  Xem
+                  <%= t('todos.index.edit') %>
                 <% end %>
 
                 <%= link_to todo_path(todo),
-                    data: { turbo_method: :delete, turbo_confirm: "Bạn có chắc chắn muốn xóa todo \"#{todo.title}\"?" },
+                    data: { turbo_frame: "todo_details_frame", turbo_action: "replace" },
+                    class: "bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded text-sm font-medium" do %>
+                  <%= t('todos.index.show') %>
+                <% end %>
+
+                <%= link_to todo_path(todo),
+                    data: { turbo_method: :delete, turbo_confirm: t('todos.index.delete_confirm', title: todo.title) },
                     class: "bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded text-sm font-medium" do %>
-                  Xóa
+                  <%= t('todos.index.delete') %>
                 <% end %>
               </div>
             </td>

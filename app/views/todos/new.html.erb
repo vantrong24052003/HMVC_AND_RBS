@@ -2,54 +2,54 @@
 
 <div class="max-w-4xl mx-auto p-6">
   <%= form_with scope: :todo, url: todos_path, method: :post, class: "space-y-4 bg-white p-6 rounded-lg shadow border", data: { controller: "todo-form", action: "submit->todo-form#normalize" } do |f| %>
-    <h2 class="text-xl font-bold mb-4">Tạo Todo Mới</h2>
+    <h2 class="text-xl font-bold mb-4"><%= t('todos.new.title') %></h2>
 
     <div>
-      <%= f.label :title, "Tiêu đề", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.label :title, t('todos.new.form.title'), class: "block text-sm font-medium text-gray-700 mb-1" %>
       <%= f.text_field :title, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" %>
     </div>
 
     <div>
-      <%= f.label :description, "Mô tả", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.label :description, t('todos.new.form.description'), class: "block text-sm font-medium text-gray-700 mb-1" %>
       <%= f.text_field :description, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" %>
     </div>
 
     <div>
-      <%= f.label :priority, "Độ ưu tiên", class: "block text-sm font-medium text-gray-700 mb-1" %>
-      <%= f.select :priority, options_for_select(Todos::NewForm.priority.values.map { |priority| [priority.humanize, priority] }), {}, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" %>
+      <%= f.label :priority, t('todos.new.form.priority'), class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.select :priority, options_for_select(Todos::NewForm.priority.values.map { |priority| [priority.text, priority] }), {}, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" %>
     </div>
 
     <div>
-      <%= f.label :status, "Trạng thái", class: "block text-sm font-medium text-gray-700 mb-1" %>
-      <%= f.select :status, options_for_select(Todos::NewForm.status.values.map { |status| [status.humanize, status] }), {}, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" %>
+      <%= f.label :status, t('todos.new.form.status'), class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.select :status, options_for_select(Todos::NewForm.status.values.map { |status| [status.text, status] }), {}, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" %>
     </div>
 
     <div>
-      <%= f.label :limit, "Thời gian giới hạn", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.label :limit, t('todos.new.form.limit'), class: "block text-sm font-medium text-gray-700 mb-1" %>
       <div class="flex space-x-2">
-        <%= f.number_field :limit, min: 1, class: "flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white", placeholder: "Ví dụ: 60", id: "todo_limit", data: { "todo-form-target": "limit" } %>
+        <%= f.number_field :limit, min: 1, class: "flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white", placeholder: t('todos.new.form.limit_placeholder'), id: "todo_limit", data: { "todo-form-target": "limit" } %>
         <select id="todo_limit_unit" class="px-3 py-2 border border-gray-300 rounded-md bg-white" data-todo-form-target="unit">
-          <option value="minutes" selected>Phút</option>
-          <option value="hours">Giờ</option>
+          <option value="minutes" selected><%= t('todos.new.limit_unit_minutes') %></option>
+          <option value="hours"><%= t('todos.new.limit_unit_hours') %></option>
         </select>
       </div>
-      <p class="text-xs text-gray-500 mt-1">Chọn đơn vị phút/giờ. Khi gửi, hệ thống tự đổi sang phút.</p>
+      <p class="text-xs text-gray-500 mt-1"><%= t('todos.new.form.limit_help') %></p>
     </div>
 
     <div>
-      <%= f.label :started_at, "Thời gian bắt đầu", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <%= f.label :started_at, t('todos.new.form.started_at'), class: "block text-sm font-medium text-gray-700 mb-1" %>
       <div class="flex space-x-2">
         <%= f.datetime_local_field :started_at, class: "flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white", id: "todo_started_at", data: { "todo-form-target": "startedAt" } %>
-        <button type="button" class="px-3 py-2 bg-gray-100 border border-gray-300 rounded hover:bg-gray-200 text-sm" data-action="todo-form#startNow">Bắt đầu ngay</button>
+        <button type="button" class="px-3 py-2 bg-gray-100 border border-gray-300 rounded hover:bg-gray-200 text-sm" data-action="todo-form#startNow"><%= t('todos.new.start_now') %></button>
       </div>
-      <p class="text-xs text-gray-500 mt-1">Để trống nếu chưa bắt đầu làm</p>
+      <p class="text-xs text-gray-500 mt-1"><%= t('todos.new.form.started_at_help') %></p>
     </div>
 
     <div class="mt-6 pt-4 border-t border-gray-200" data-controller="schedule" data-action="change->schedule#change">
-      <h3 class="text-md font-semibold mb-2">Schedule</h3>
+      <h3 class="text-md font-semibold mb-2"><%= t('todos.new.form.schedule') %></h3>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Interval</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1"><%= t('todos.new.form.interval') %></label>
           <select name="todo[schedules][interval]" class="w-full h-10 px-3 py-2 border border-gray-300 rounded-md bg-white" data-schedule-target="interval">
             <option value="daily">daily</option>
             <option value="weekly">weekly</option>
@@ -57,38 +57,38 @@
           </select>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Hour</label>
-          <input type="number" name="todo[schedules][hour]" min="0" max="23" class="w-full h-10 px-3 py-2 border border-gray-300 rounded-md bg-white" placeholder="0-23" data-schedule-target="hour">
+          <label class="block text-sm font-medium text-gray-700 mb-1"><%= t('todos.new.form.hour') %></label>
+          <input type="number" name="todo[schedules][hour]" min="0" max="23" class="w-full h-10 px-3 py-2 border border-gray-300 rounded-md bg-white" placeholder="<%= t('todos.new.form.hour_placeholder') %>" data-schedule-target="hour">
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Minute</label>
-          <input type="number" name="todo[schedules][minute]" min="0" max="59" class="w-full h-10 px-3 py-2 border border-gray-300 rounded-md bg-white" placeholder="0-59" data-schedule-target="minute">
+          <label class="block text-sm font-medium text-gray-700 mb-1"><%= t('todos.new.form.minute') %></label>
+          <input type="number" name="todo[schedules][minute]" min="0" max="59" class="w-full h-10 px-3 py-2 border border-gray-300 rounded-md bg-white" placeholder="<%= t('todos.new.form.minute_placeholder') %>" data-schedule-target="minute">
         </div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
         <div data-schedule-target="weekdayRow" class="hidden">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Weekday (for weekly)</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1"><%= t('todos.new.form.weekday') %></label>
           <select name="todo[schedules][weekday]" class="w-full h-10 px-3 py-2 border border-gray-300 rounded-md bg-white" data-schedule-target="weekday">
             <option value="">--</option>
-            <option value="sunday">Sunday</option>
-            <option value="monday">Monday</option>
-            <option value="tuesday">Tuesday</option>
-            <option value="wednesday">Wednesday</option>
-            <option value="thursday">Thursday</option>
-            <option value="friday">Friday</option>
-            <option value="saturday">Saturday</option>
+            <option value="sunday"><%= t('todos.new.weekday_options.sunday') %></option>
+            <option value="monday"><%= t('todos.new.weekday_options.monday') %></option>
+            <option value="tuesday"><%= t('todos.new.weekday_options.tuesday') %></option>
+            <option value="wednesday"><%= t('todos.new.weekday_options.wednesday') %></option>
+            <option value="thursday"><%= t('todos.new.weekday_options.thursday') %></option>
+            <option value="friday"><%= t('todos.new.weekday_options.friday') %></option>
+            <option value="saturday"><%= t('todos.new.weekday_options.saturday') %></option>
           </select>
         </div>
         <div data-schedule-target="dayRow" class="hidden">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Day (for monthly)</label>
-          <input type="number" name="todo[schedules][day]" min="1" max="31" class="w-full h-10 px-3 py-2 border border-gray-300 rounded-md bg-white" placeholder="1-31" data-schedule-target="day">
+          <label class="block text-sm font-medium text-gray-700 mb-1"><%= t('todos.new.form.day') %></label>
+          <input type="number" name="todo[schedules][day]" min="1" max="31" class="w-full h-10 px-3 py-2 border border-gray-300 rounded-md bg-white" placeholder="<%= t('todos.new.form.day_placeholder') %>" data-schedule-target="day">
         </div>
       </div>
     </div>
 
     <div class="flex space-x-3">
-      <%= f.submit "Tạo Todo", class: "bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded font-medium" %>
-      <%= link_to "Hủy", todos_path, class: "bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded font-medium" %>
+      <%= f.submit t('todos.new.buttons.create'), class: "bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded font-medium" %>
+      <%= link_to t('todos.new.buttons.cancel'), todos_path, class: "bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded font-medium" %>
     </div>
   <% end %>
 </div>

@@ -1,0 +1,9 @@
+<div class="flex items-center space-x-2">
+  <span class="text-sm text-gray-600">Language:</span>
+  <div class="flex space-x-1">
+    <%= link_to "VI", url_for(request.query_parameters.merge(locale: :vi)),
+        class: "px-2 py-1 text-xs rounded #{'bg-blue-500 text-white' if I18n.locale == :vi}" %>
+    <%= link_to "EN", url_for(request. query_parameters.merge(locale: :en)),
+        class: "px-2 py-1 text-xs rounded #{'bg-blue-500 text-white' if I18n.locale == :en}" %>
+  </div>
+</div>
