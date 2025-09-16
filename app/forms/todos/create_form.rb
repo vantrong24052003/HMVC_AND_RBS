@@ -8,9 +8,13 @@ class Todos::CreateForm < ApplicationForm
   attribute :description, :string
   attribute :priority, :string
   attribute :status, :string
+  attribute :limit, :integer
+  attribute :started_at, :datetime
+  attribute :schedules
 
   validates :title, presence: true
   validates :description, presence: true
+  validates :limit, numericality: { greater_than: 0 }, allow_nil: true
   enumerize :status, in: { pending: 0, progress: 1, done: 2 }
   enumerize :priority, in: { low: 0, medium: 1, high: 2 }
 end

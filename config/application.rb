@@ -26,7 +26,9 @@ module Elearning
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
     #
-    # config.time_zone = "Central Time (US & Canada)"
+    config.time_zone = "Asia/Ho_Chi_Minh"
+    config.active_record.default_timezone = :utc
+    config.active_record.time_zone_aware_attributes = true
     # config.eager_load_paths << Rails.root.join("extras")
   end
 end
