@@ -1,4 +1,25 @@
 vi:
+  activemodel:
+    errors:
+      models:
+        todos/update_form:
+          attributes:
+            title:
+              blank: "Tiêu đề không được để trống"
+            description:
+              blank: "Mô tả không được để trống"
+        todos/create_form:
+          attributes:
+            title:
+              blank: "Tiêu đề không được để trống"
+            description:
+              blank: "Mô tả không được để trống"
+        todos/edit_form:
+          attributes:
+            title:
+              blank: "Tiêu đề không được để trống"
+            description:
+              blank: "Mô tả không được để trống"
   activerecord:
     models:
       todo: "Công việc"
@@ -31,11 +52,21 @@ vi:
       models:
         todo:
           attributes:
+            title:
+              blank: "Tiêu đề không được để trống"
+            description:
+              blank: "Mô tả không được để trống"
+            limit:
+              greater_than: "Thời gian giới hạn phải lớn hơn 0"
             base:
               total_task_duration_exceeds_limit: "Tổng thời lượng tasks (%{total} phút) vượt giới hạn todo (%{limit} phút)"
             schedules:
               weekday_required: "weekday is required for weekly schedule"
               weekday_invalid: "weekday invalid"
+  errors:
+    messages:
+      blank: "không được để trống"
+      greater_than: "phải lớn hơn %{count}"
       task:
         title: "Tiêu đề"
         description: "Mô tả"

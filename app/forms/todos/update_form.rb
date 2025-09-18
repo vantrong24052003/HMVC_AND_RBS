@@ -14,5 +14,4 @@ class Todos::UpdateForm < ApplicationForm
 
   validates :title, presence: true
   validates :description, presence: true
-  validates :limit, numericality: { greater_than: 0 }, allow_nil: true
 end
