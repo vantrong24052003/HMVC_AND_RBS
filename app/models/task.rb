@@ -6,16 +6,4 @@ class Task < ApplicationRecord
 
   validates :title, presence: true
   validates :description, presence: true
-
-  scope :overdue, -> { where("due_at < ?", Time.current) }
-  scope :upcoming, -> { where("due_at > ?", Time.current) }
-  scope :with_due_date, -> { where.not(due_at: nil) }
-
-  def overdue?
-    due_at.present? && due_at < Time.current
-  end
-
-  def upcoming?
-    due_at.present? && due_at > Time.current
-  end
 end
