@@ -3,8 +3,8 @@ class Todo < ApplicationRecord
   has_many :todo_jobs, dependent: :destroy
   accepts_nested_attributes_for :tasks, allow_destroy: true
 
-  enumerize :priority, in: { low: 0, medium: 1, high: 2 }, i18n_scope: 'activerecord.enums.todo.priority'
-  enumerize :status, in: { pending: 0, progress: 1, done: 2 }, i18n_scope: 'activerecord.enums.todo.status'
+  enumerize :priority, in: { low: 0, medium: 1, high: 2 }, i18n_scope: "activerecord.enums.todo.priority"
+  enumerize :status, in: { pending: 0, progress: 1, done: 2 }, i18n_scope: "activerecord.enums.todo.status"
 
   validates :limit, numericality: { greater_than: 0 }, allow_nil: true
   validate :validate_total_task_duration_within_limit
@@ -30,7 +30,7 @@ class Todo < ApplicationRecord
     return nil if interval.blank?
 
     hour = schedules["hour"] || 0
-    minute = (schedules["minute"] || 0).to_s.rjust(2, '0')
+    minute = (schedules["minute"] || 0).to_s.rjust(2, "0")
 
     case interval
     when "daily"

@@ -8,5 +8,4 @@ class Todos::NewForm < ApplicationForm
   attribute :description, :string
   attribute :status, :integer
   attribute :priority, :integer
-
 end
