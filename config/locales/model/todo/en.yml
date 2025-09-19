@@ -1,4 +1,25 @@
 en:
+  activemodel:
+    errors:
+      models:
+        todos/update_form:
+          attributes:
+            title:
+              blank: "Title can't be blank"
+            description:
+              blank: "Description can't be blank"
+        todos/create_form:
+          attributes:
+            title:
+              blank: "Title can't be blank"
+            description:
+              blank: "Description can't be blank"
+        todos/edit_form:
+          attributes:
+            title:
+              blank: "Title can't be blank"
+            description:
+              blank: "Description can't be blank"
   activerecord:
     models:
       todo: "Todo"
@@ -31,11 +52,21 @@ en:
       models:
         todo:
           attributes:
+            title:
+              blank: "Title can't be blank"
+            description:
+              blank: "Description can't be blank"
+            limit:
+              greater_than: "Limit must be greater than 0"
             base:
               total_task_duration_exceeds_limit: "Total task duration (%{total} minutes) exceeds todo limit (%{limit} minutes)"
             schedules:
               weekday_required: "weekday is required for weekly schedule"
               weekday_invalid: "weekday invalid"
+  errors:
+    messages:
+      blank: "can't be blank"
+      greater_than: "must be greater than %{count}"
       task:
         title: "Title"
         description: "Description"

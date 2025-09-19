@@ -67,6 +67,10 @@ export default class extends Controller {
               <option value="2">Done</option>
             </select>
           </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Thời lượng (phút)</label>
+            <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" type="number" min="0" name="todo[tasks_attributes][${idx}][duration_minutes]">
+          </div>
         </div>
         <input type="hidden" name="todo[tasks_attributes][${idx}][_destroy]" value="0">
       </div>

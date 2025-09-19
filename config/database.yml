@@ -6,16 +6,16 @@ default: &default
 development:
   <<: *default
   database: todos_development
-  username: trongtk248
-  password: 123123
+  username: vantrong
+  password: Trongtk248_T
   host: localhost
   port: 5432
 
 test:
   <<: *default
   database: todos_test
-  username: trongtk248
-  password: 123123
+  username: vantrong
+  password: Trongtk248_T
   host: localhost
   port: 5432
 
