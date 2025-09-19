@@ -23,6 +23,7 @@ gem "tzinfo-data", platforms: %i[windows jruby]
 gem "vite_rails", "3.0.19"
 gem "rake", "13.3"
 gem "sidekiq", "8.0.7"
+gem "whenever", require: false
 
 group :development, :test do
   gem "brakeman", "7.1.0", require: false

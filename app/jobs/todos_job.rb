@@ -7,8 +7,8 @@ class TodosJob < ApplicationJob
     return Rails.logger.info "Todo not found" if todo.nil?
     return Rails.logger.info "Todo status not active: #{todo.status}" unless %w[pending progress].include?(todo.status)
 
-    tasks = todo.tasks.select { |t| %w[pending progress].include?(t.status) }
-    return Rails.logger.info "No active tasks found" if tasks.empty?
+    tasks = todo.tasks.to_a
+    return Rails.logger.info "No tasks found" if tasks.empty?
 
     Rails.logger.info "Sending notification for todo: #{todo.title} with #{tasks.count} tasks"
     Notifications::SlackNotifier.notify_with_blocks(build_blocks(todo, tasks))
@@ -18,9 +18,15 @@ class TodosJob < ApplicationJob
 
   def build_blocks(todo, tasks)
     priority_emoji = { "high" => "🔴", "medium" => "🟡" }.fetch(todo.priority, "🟢")
-    task_list = tasks.map do |task|
-      format_task_line(todo, task)
-    end.join("\n")
+
+    pending_lines = tasks.select { |t| t.status == "pending" }.map { |t| format_task_line(todo, t) }
+    progress_lines = tasks.select { |t| t.status == "progress" }.map { |t| format_task_line(todo, t) }
+    done_lines = tasks.select { |t| t.status == "done" }.map { |t| format_task_line(todo, t) }
+
+    sections = []
+    sections << { type: "section", text: { type: "mrkdwn", text: "*Pending:*\n#{pending_lines.join("\n")}" } } unless pending_lines.empty?
+    sections << { type: "section", text: { type: "mrkdwn", text: "*In progress:*\n#{progress_lines.join("\n")}" } } unless progress_lines.empty?
+    sections << { type: "section", text: { type: "mrkdwn", text: "*Completed:*\n#{done_lines.join("\n")}" } } unless done_lines.empty?
 
     [
       { type: "header", text: { type: "plain_text", text: "#{priority_emoji} #{todo.title}" } },
@@ -28,13 +34,17 @@ class TodosJob < ApplicationJob
       { type: "section", fields: [
         { type: "mrkdwn", text: "*Status:*\n`#{todo.status}`" },
         { type: "mrkdwn", text: "*Priority:*\n`#{todo.priority}`" }
-      ] },
-      { type: "section", text: { type: "mrkdwn", text: "*Tasks:*\n#{task_list}" } }
-    ]
+      ] }
+    ] + sections
   end
 
   def format_task_line(todo, task)
-    status_emoji = task.status == "pending" ? "⏳" : "🔄"
+    status_emoji = case task.status
+    when "pending" then "⏳"
+    when "progress" then "🔄"
+    when "done" then "✅"
+    else ""
+    end
     time_range = calculate_time_range(todo, task)
 
     "*#{task.title}*\n#{status_emoji} _#{task.description}_\n   `Status:` #{task.status} | `Time:` #{time_range}"
