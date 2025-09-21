@@ -5,7 +5,9 @@
   "author": "tms-vantrong <trong.doan@tomosia.com>",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon mcp-server.js"
+    "start": "nodemon mcp-server.js",
+    "build": "vite build",
+    "dev": "vite"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.21",
