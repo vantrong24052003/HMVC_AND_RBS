@@ -1,5 +1,9 @@
 en:
   todos:
+    flash:
+      created_successfully: "Todo created successfully"
+      updated_successfully: "Todo updated successfully"
+      deleted_successfully: "Todo deleted successfully"
     index:
       title: "Todo List"
       new_todo: "Add Todo"

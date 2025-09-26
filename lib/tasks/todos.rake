@@ -6,8 +6,8 @@ namespace :todos do
   desc "Dispatch daily scheduled todos"
   task "dispatch:daily" => :environment do
     Todo.where(status: ALLOWED_STATUSES)
-      .where("(schedules ->> 'interval') = ?", "daily")
-      .find_in_batches(batch_size: 1000) do |group|
+        .where("(schedules ->> 'interval') = ?", "daily")
+        .find_in_batches(batch_size: 1000) do |group|
       group.each do |todo|
         TodosJob.perform_later(todo.id) if schedule_due_now?(todo.schedules)
       end
@@ -17,8 +17,8 @@ namespace :todos do
   desc "Dispatch weekly scheduled todos"
   task "dispatch:weekly" => :environment do
     Todo.where(status: ALLOWED_STATUSES)
-      .where("(schedules ->> 'interval') = ?", "weekly")
-      .find_in_batches(batch_size: 1000) do |group|
+        .where("(schedules ->> 'interval') = ?", "weekly")
+        .find_in_batches(batch_size: 1000) do |group|
       group.each do |todo|
         TodosJob.perform_later(todo.id) if schedule_due_now?(todo.schedules)
       end
@@ -28,15 +28,14 @@ namespace :todos do
   desc "Dispatch monthly scheduled todos"
   task "dispatch:monthly" => :environment do
     Todo.where(status: ALLOWED_STATUSES)
-      .where("(schedules ->> 'interval') = ?", "monthly")
-      .find_in_batches(batch_size: 1000) do |group|
+        .where("(schedules ->> 'interval') = ?", "monthly")
+        .find_in_batches(batch_size: 1000) do |group|
       group.each do |todo|
         TodosJob.perform_later(todo.id) if schedule_due_now?(todo.schedules)
       end
     end
   end
 end
-
 
 def schedule_due_now?(schedules)
   interval = schedules["interval"].to_s

@@ -1,8 +1,126 @@
-# Omakase Ruby styling for Rails
-inherit_gem: { rubocop-rails-omakase: rubocop.yml }
+plugins:
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-capybara
+  - rubocop-rake
 
-# Overwrite or add rules to create your own house style
-#
-# # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
-# Layout/SpaceInsideArrayLiteralBrackets:
-#   Enabled: false
+inherit_mode:
+  merge:
+    - Include
+    - Exclude
+
+AllCops:
+  UseCache: true
+  SuggestExtensions: false
+  Include:
+    - 'app/views/**/*.jb'
+    - 'app/views/**/*.jbuilder'
+    - 'db/schemas/Schemafile'
+    - 'db/schemas/*.schema'
+  Exclude:
+    - 'Gemfile.lock'
+    - 'db/schema.rb'
+    - 'spec/fixtures/vcr_cassettes/**/*.yml'
+  NewCops: enable
+
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
+Layout/FirstArgumentIndentation:
+  EnforcedStyle: consistent
+Layout/HashAlignment:
+  EnforcedHashRocketStyle: table
+  EnforcedColonStyle: table
+Layout/LineLength:
+  # Max: 120 # TODO: rubocop_todo.yml を解消したら有効化
+  Exclude:
+    - 'spec/**/*_spec.rb'
+    - 'spec/**/shared_examples.rb'
+    - 'spec/factories/**/*.rb'
+    - 'config/initializers/**/*.rb'
+
+Metrics/AbcSize:
+  Enabled: false
+Metrics/BlockLength:
+  # Max: 50 # TODO: rubocop_todo.yml を解消したら有効化
+  Exclude:
+    - '**/*.json.jbuilder'
+    - '**/*.json.jb'
+    - 'spec/**/*_spec.rb'
+    - 'spec/**/shared_examples.rb'
+    - 'spec/factories/**/*.rb'
+    - 'config/environments/**/*.rb'
+    - 'lib/tasks/**/*.rake'
+Metrics/ClassLength:
+  Enabled: false
+Metrics/CollectionLiteralLength:
+  Enabled: false
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - 'lib/tasks/**/*.rake'
+Metrics/MethodLength:
+  Exclude:
+    - 'lib/tasks/**/*.rake'
+Metrics/ModuleLength:
+  Enabled: false
+# Metrics/PerceivedComplexity:
+#   Max: 10 # TODO: rubocop_todo.yml を解消したら有効化
+
+Naming/MethodParameterName:
+  AllowedNames:
+    - ad
+Naming/PredicateMethod:
+  Exclude:
+    - 'app/services/**/*.rb'
+Naming/VariableNumber:
+  EnforcedStyle: snake_case
+
+Rails/EnvironmentVariableAccess:
+  AllowReads: true
+  AllowWrites: false
+Rails/Delegate:
+  Enabled: false
+Rails/FilePath:
+  Exclude:
+    - 'spec/requests/**/*_spec.rb'
+Rails/I18nLocaleTexts:
+  Exclude:
+    - 'app/controllers/sysadmin/**/*.rb'
+Rails/ToFormattedS:
+  EnforcedStyle: to_formatted_s
+Rails/BulkChangeTable:
+  Exclude:
+    - 'db/migrate/**/*.rb'
+Rails/ReversibleMigration:
+  Exclude:
+    - 'db/migrate/**/*.rb'
+
+Style/AsciiComments:
+  Enabled: false
+Style/ClassAndModuleChildren:
+  Enabled: false
+Style/Documentation:
+  Enabled: false
+Style/GuardClause:
+  Enabled: false
+Style/HashSyntax:
+  EnforcedShorthandSyntax: always
+Style/IfUnlessModifier:
+  Enabled: false
+Style/Lambda:
+  Exclude:
+    - 'spec/**/*_spec.rb' # 可読性を優先
+Style/NumericPredicate:
+  Enabled: false
+Style/RescueModifier:
+  Enabled: false
+Style/SafeNavigationChainLength:
+  Enabled: false
+Style/StringLiterals:
+  Enabled: true
+  EnforcedStyle: double_quotes
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: consistent_comma
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: consistent_comma

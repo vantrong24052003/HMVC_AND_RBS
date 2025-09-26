@@ -1,5 +1,9 @@
 vi:
   todos:
+    flash:
+      created_successfully: "Todo được tạo thành công"
+      updated_successfully: "Todo được cập nhật thành công"
+      deleted_successfully: "Todo được xóa thành công"
     index:
       title: "Danh sách Todos"
       new_todo: "Thêm Todo"
