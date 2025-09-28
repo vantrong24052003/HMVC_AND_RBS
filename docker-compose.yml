@@ -1,51 +1,74 @@
-version: '3.8'
+volumes:
+  postgresdata: #Tạo volume để lưu trữ dữ liệu của database PostgreSQL.
+  bundler: #Tạo volume để lưu trữ các gem của Ruby.
+  node_modules: #Tạo volume để lưu trữ các node_modules của JavaScript.
+  redisdata: #Tạo volume để lưu trữ dữ liệu của Redis.
 
 services:
-  db:
+  app: &app #Tạo base service để sử dụng cho các service khác.
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://todo:123123@postgres:5432/hmvc_and_rbs_development
+      RAILS_ENV: development
+    volumes:
+      - .:/app
+      - bundler:/app/.bundle
+      - node_modules:/app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+  postgres:
     image: postgres:15-alpine
     environment:
       POSTGRES_DB: hmvc_and_rbs_development
       POSTGRES_USER: todo
       POSTGRES_PASSWORD: 123123
-    volumes:
-      - db_data:/var/lib/postgresql/data
     ports:
-      - "5435:5432"
+      - 5435:5432
+    volumes:
+      - postgresdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U todo"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      interval: 10s #Thời gian giữa các lần kiểm tra sức khỏe.
+      timeout: 5s #Thời gian tối đa để kiểm tra sức khỏe.
+      retries: 5 #Số lần kiểm tra sức khỏe.
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - 6379:6379
+    volumes:
+      - redisdata:/data
 
   web:
-    build: .
-    ports:
-      - "3000:3000"
+    <<: *app
+    command: bash -c "rm -f tmp/pids/web.pid && bundle exec rails server -b 0.0.0.0 -p 3000"
     environment:
-      - RAILS_ENV=development
-      - DATABASE_URL=postgresql://todo:123123@db:5432/hmvc_and_rbs_development
-    volumes:
-      - .:/app
-    depends_on:
-      db:
-        condition: service_healthy
-    command: >
-      sh -c "
-        bundle exec rails db:create db:migrate &&
-        bundle exec rails server -b 0.0.0.0 -p 3000
-      "
+      DATABASE_URL: postgresql://todo:123123@postgres:5432/hmvc_and_rbs_development
+      RAILS_ENV: development
+      PIDFILE: tmp/pids/web.pid
+    ports:
+      - 3000:3000
 
   vite:
-    build: .
+    <<: *app
+    command: bash -c "yarn install && bundle exec bin/vite dev"
+    environment:
+      RAILS_ENV: development
     ports:
-      - "3036:3036"
-    volumes:
-      - .:/app
-    command: >
-      sh -c "
-        yarn install &&
-        bundle exec bin/vite dev
-      "
+      - 3036:3036
 
-volumes:
-  db_data:
+  sidekiq:
+    <<: *app
+    command:
+      - bundle
+      - exec
+      - sidekiq
+    environment:
+      DATABASE_URL: postgresql://todo:123123@postgres:5432/hmvc_and_rbs_development
+      RAILS_ENV: development
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - redis
