@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 # check=error=true
 
-ARG RUBY_VERSION=3.3.9
+ARG RUBY_VERSION=3.3.8
 ARG NODE_VERSION=20.19.2
 ARG YARN_VERSION=1.22.22
 
@@ -55,8 +55,6 @@ RUN yarn install --immutable && yarn add yarn@$YARN_VERSION
 # Copy config vite
 COPY app/frontend ./app/frontend
 COPY vite.config.mts ./
-
-# Copy application code
 COPY . .
 
 # Step 3: Runtime base (New image) (Create env clearly)
