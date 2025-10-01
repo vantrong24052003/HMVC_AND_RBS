@@ -1,74 +1,78 @@
 volumes:
-  postgresdata: #Tạo volume để lưu trữ dữ liệu của database PostgreSQL.
-  bundler: #Tạo volume để lưu trữ các gem của Ruby.
-  node_modules: #Tạo volume để lưu trữ các node_modules của JavaScript.
-  redisdata: #Tạo volume để lưu trữ dữ liệu của Redis.
+  postgresdata:
+  valkeydata:
+  node_modules:
+  bundler:
 
 services:
-  app: &app #Tạo base service để sử dụng cho các service khác.
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      DATABASE_URL: postgresql://todo:123123@postgres:5432/hmvc_and_rbs_development
-      RAILS_ENV: development
-    volumes:
-      - .:/app
-      - bundler:/app/.bundle
-      - node_modules:/app/node_modules
-    depends_on:
-      postgres:
-        condition: service_healthy
   postgres:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     environment:
-      POSTGRES_DB: hmvc_and_rbs_development
-      POSTGRES_USER: todo
-      POSTGRES_PASSWORD: 123123
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_ROOT_HOST: "%"
+      POSTGRES_START_TIMEOUT: 60
     ports:
-      - 5435:5432
+      - 5432:5432
     volumes:
       - postgresdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U todo"]
-      interval: 10s #Thời gian giữa các lần kiểm tra sức khỏe.
-      timeout: 5s #Thời gian tối đa để kiểm tra sức khỏe.
-      retries: 5 #Số lần kiểm tra sức khỏe.
 
-  redis:
-    image: redis:7-alpine
+# redis
+  valkey:
+    image: valkey/valkey:8.1.3-alpine
     ports:
       - 6379:6379
     volumes:
-      - redisdata:/data
+      - valkeydata:/data
+
+  mailcatcher:
+    image: schickling/mailcatcher
+    ports:
+      - 1080:1080
+
+  # -------------------------------------------------------------#
+
+  app: &app
+    image: todo-list-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app #map toàn bộ code hiện tại vào /app trong container
+      - bundler:/app/.bundle #Tạo một volume tên bundler để lưu thư viện Ruby (bundle install).
+      - node_modules:/app/node_modules #Tạo một volume tên node_modules để lưu thư viện Node.js (npm install).
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: todos_development
+      DB_USERNAME: postgres
+      DB_PASSWORD: ""
+      REDIS_HOST: valkey
+      SMTP_HOST: mailcatcher
+    depends_on:
+      - postgres
+      - valkey
+    tty: true # Bật terminal ảo cho container
+    stdin_open: true # Cho phép nhập lệnh tương tác với terminal
 
   web:
     <<: *app
-    command: bash -c "rm -f tmp/pids/web.pid && bundle exec rails server -b 0.0.0.0 -p 3000"
+    command: bash -c "bundle install && rm -f tmp/pids/web.pid && bin/rails server -b 0.0.0.0 -p 4000"
     environment:
-      DATABASE_URL: postgresql://todo:123123@postgres:5432/hmvc_and_rbs_development
-      RAILS_ENV: development
+      DB_HOST: postgres
+      REDIS_HOST: valkey
+      SMTP_HOST: mailcatcher
       PIDFILE: tmp/pids/web.pid
     ports:
-      - 3000:3000
-
-  vite:
-    <<: *app
-    command: bash -c "yarn install && bundle exec bin/vite dev"
-    environment:
-      RAILS_ENV: development
-    ports:
-      - 3036:3036
+      - 4000:4000
 
   sidekiq:
     <<: *app
-    command:
-      - bundle
-      - exec
-      - sidekiq
+    command: bash -c "rm -f tmp/pids/sidekiq.pid && bundle exec sidekiq"
+
+  vite:
+    <<: *app
+    command: bash -c "yarn install && rm -f tmp/pids/vite.pid && bundle exec bin/vite dev"
     environment:
-      DATABASE_URL: postgresql://todo:123123@postgres:5432/hmvc_and_rbs_development
-      RAILS_ENV: development
-      REDIS_URL: redis://redis:6379/0
-    depends_on:
-      - redis
+      PIDFILE: tmp/pids/vite.pid
+    ports:
+      - 5173:5173

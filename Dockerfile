@@ -66,7 +66,8 @@ WORKDIR /app
 
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
-      postgresql-client && \
+      postgresql-client \
+      cron && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Set environment: os, ruby, application
@@ -76,6 +77,9 @@ ENV TZ="Asia/Ho_Chi_Minh" \
     BUNDLE_PATH=".bundle" \
     PATH=/usr/local/node/bin:$PATH
 
+# Copy Node.js và yarn từ build stage
+COPY --from=build /usr/local/node /usr/local/node
+
 # Copy toàn bộ app đã build từ build stage sang runtime stage
 # Bao gồm: Ruby gems, Node modules, source code, compiled assets
 COPY --from=build /app /app
@@ -83,4 +87,4 @@ COPY --from=build /app /app
 # Copy compiled frontend assets để serve static files (CSS, JS, images)
 COPY --from=build /app/public/vite ./app/public/vite
 
-EXPOSE 3000
+EXPOSE 4000
