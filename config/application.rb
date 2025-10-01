@@ -19,7 +19,6 @@ module Elearning
     config.active_job.queue_adapter = :sidekiq
 
     config.active_record.primary_key = :uuid
-    #
     config.time_zone = "Asia/Ho_Chi_Minh"
     config.active_record.default_timezone = :utc
     config.active_record.time_zone_aware_attributes = true

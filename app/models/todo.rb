@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Todo < ApplicationRecord
   has_many :tasks, dependent: :destroy
   has_many :todo_jobs, dependent: :destroy
@@ -12,7 +14,7 @@ class Todo < ApplicationRecord
   before_validation :normalize_weekday
   before_save :set_expired_at, if: -> { started_at_changed? || limit_changed? }
 
-  scope :expired, -> { where("expired_at <= ?", Time.zone.now) }
+  scope :expired, -> { where(expired_at: ..Time.zone.now) }
   scope :active, -> { where("expired_at > ? OR expired_at IS NULL", Time.zone.now) }
 
   def expired?
@@ -24,31 +26,41 @@ class Todo < ApplicationRecord
   end
 
   def display_schedule
-    return nil if schedules.blank?
-
-    interval = schedules["interval"]
-    return nil if interval.blank?
+    return nil unless valid_schedule?
 
     hour = schedules["hour"] || 0
     minute = (schedules["minute"] || 0).to_s.rjust(2, "0")
 
-    case interval
-    when "daily"
-      I18n.t("activerecord.attribute_values.todo.schedule.daily", hour: hour, minute: minute)
-    when "weekly"
-      weekday = schedules["weekday"]
-      if weekday.present?
-        day_name = I18n.t("activerecord.attribute_values.todo.day_name.#{weekday}")
-        I18n.t("activerecord.attribute_values.todo.schedule.weekly", day: day_name, hour: hour, minute: minute)
-      end
-    when "monthly"
-      day = schedules["day"]
-      if day.present?
-        I18n.t("activerecord.attribute_values.todo.schedule.monthly", day: day, hour: hour, minute: minute)
-      end
+    case schedules["interval"]
+    when "daily" then I18n.t("activerecord.attribute_values.todo.schedule.daily", hour:, minute:)
+    when "weekly" then format_weekly_schedule(hour, minute)
+    when "monthly" then format_monthly_schedule(hour, minute)
     end
   end
 
+  def valid_schedule?
+    schedules.present? && schedules["interval"].present?
+  end
+
+  def format_weekly_schedule(hour, minute)
+    weekday = schedules["weekday"]
+    return nil if weekday.blank?
+
+    day_name = I18n.t("activerecord.attribute_values.todo.day_name.#{weekday}")
+    I18n.t("activerecord.attribute_values.todo.schedule.weekly", day: day_name, hour:, minute:)
+  end
+
+  def format_monthly_schedule(hour, minute)
+    day = schedules["day"]
+    return nil if day.blank?
+
+    I18n.t("activerecord.attribute_values.todo.schedule.monthly", day:, hour:, minute:)
+  end
+
+  WEEKDAY_INDEX = {
+    "sunday" => 0, "monday" => 1, "tuesday" => 2, "wednesday" => 3,
+    "thursday" => 4, "friday" => 5, "saturday" => 6,
+  }.freeze
 
   private
 
@@ -62,27 +74,24 @@ class Todo < ApplicationRecord
 
     total = tasks.reject(&:marked_for_destruction?).sum { |t| t.duration_minutes.to_i }
     if total > limit.to_i
-      errors.add(:base, I18n.t("activerecord.errors.models.todo.attributes.base.total_task_duration_exceeds_limit", total: total, limit: limit))
+      errors.add(:base,
+                 I18n.t("activerecord.errors.models.todo.attributes.base.total_task_duration_exceeds_limit", total:,
+                                                                                                             limit:,),)
     end
   end
 
-  WEEKDAY_INDEX = { "sunday" => 0, "monday" => 1, "tuesday" => 2, "wednesday" => 3, "thursday" => 4, "friday" => 5, "saturday" => 6 }.freeze
-
   def normalize_weekday
-    return if schedules.blank? || schedules["interval"] != "weekly"
+    return unless schedules.present? && schedules["interval"] == "weekly"
 
     value = schedules["weekday"]
-    if value.blank?
-      errors.add(:schedules, I18n.t("activerecord.errors.models.todo.attributes.schedules.weekday_required"))
-      return
-    end
+    return add_weekday_error(:weekday_required) if value.blank?
 
     idx = WEEKDAY_INDEX[value.to_s.downcase]
-    if idx.nil?
-      errors.add(:schedules, I18n.t("activerecord.errors.models.todo.attributes.schedules.weekday_invalid"))
-    else
-      schedules["weekday"] = idx
-    end
+    idx.nil? ? add_weekday_error(:weekday_invalid) : schedules["weekday"] = idx
+  end
+
+  def add_weekday_error(key)
+    errors.add(:schedules, I18n.t("activerecord.errors.models.todo.attributes.schedules.#{key}"))
   end
 
   # create todo to list, option target: "todos" is the id of the list in the view (index.html.erb)

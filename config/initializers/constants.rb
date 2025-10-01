@@ -1,3 +1,3 @@
 # frozen_string_literal: true
 
-Dir[Rails.root.join("app", "constants", "*.rb")].sort.each { |file| require file }
+Rails.root.glob("app/constants/*.rb").each { |file| require file }
