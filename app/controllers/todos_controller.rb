@@ -28,6 +28,15 @@ class TodosController < ApplicationController
     @form = operator.form
   end
 
+  # [GET]...
+  def edit
+    operator = Todos::EditOperation.new(params)
+    operator.call
+
+    @form = operator.form
+    @todo = operator.todo
+  end
+
   # [POST]...
   def create
     operator = Todos::CreateOperation.new(params)
@@ -38,18 +47,9 @@ class TodosController < ApplicationController
     @todo = operator.todo
 
     respond_to do |format|
-      format.html { redirect_to todos_path, notice: "Todo created successfully" }
-      format.turbo_stream { redirect_to todos_path, notice: "Todo created successfully" }
+      format.html { redirect_to todos_path, notice: t("todos.flash.created_successfully") }
+      format.turbo_stream { redirect_to todos_path, notice: t("todos.flash.created_successfully") }
     end
-  end
-
-  # [GET]...
-  def edit
-    operator = Todos::EditOperation.new(params)
-    operator.call
-
-    @form = operator.form
-    @todo = operator.todo
   end
 
   # [PUT]...
@@ -61,19 +61,19 @@ class TodosController < ApplicationController
     return render :edit, status: :unprocessable_entity if @form.errors.present?
 
     respond_to do |format|
-      format.html { redirect_to todos_path, notice: "Todo updated successfully" }
-      format.turbo_stream { redirect_to todos_path, notice: "Todo updated successfully" }
+      format.html { redirect_to todos_path, notice: t("todos.flash.updated_successfully") }
+      format.turbo_stream { redirect_to todos_path, notice: t("todos.flash.updated_successfully") }
     end
   end
 
   # [DELETE]...
   def destroy
-      operator = Todos::DestroyOperation.new(params)
-      operator.call
+    operator = Todos::DestroyOperation.new(params)
+    operator.call
 
-      respond_to do |format|
-        format.html { redirect_to todos_path, notice: "Todo deleted successfully" }
-        format.turbo_stream { redirect_to todos_path, notice: "Todo deleted successfully" }
-      end
+    respond_to do |format|
+      format.html { redirect_to todos_path, notice: t("todos.flash.deleted_successfully") }
+      format.turbo_stream { redirect_to todos_path, notice: t("todos.flash.deleted_successfully") }
+    end
   end
 end
