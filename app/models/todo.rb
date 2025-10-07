@@ -95,11 +95,11 @@ class Todo < ApplicationRecord
   end
 
   # create todo to list, option target: "todos" is the id of the list in the view (index.html.erb)
-  after_create_commit -> { broadcast_append_to :todos, target: "todos" }
+  # after_create_commit -> { broadcast_append_to :todos, target: "todos" }
 
-  # update todo in list, option target: "todos" is the id of the list in the view (index.html.erb)
-  after_update_commit -> { broadcast_replace_to :todos }
+  # # update todo in list, option target: "todos" is the id of the list in the view (index.html.erb)
+  # after_update_commit -> { broadcast_replace_to :todos }
 
-  # remove todo from list
-  after_destroy_commit -> { broadcast_remove_to :todos }
+  # # remove todo from list
+  # after_destroy_commit -> { broadcast_remove_to :todos }
 end
