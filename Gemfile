@@ -38,6 +38,10 @@ group :development, :test do
 end
 
 group :development do
+  gem "capistrano", "3.19.2", require: false
+  gem "capistrano-bundler", require: false
+  gem "capistrano-rails", require: false
+  gem "capistrano-rvm", require: false
   gem "rbs"
   gem "web-console"
 end
