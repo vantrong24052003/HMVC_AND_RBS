@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 # check=error=true
 
-ARG RUBY_VERSION=3.3.9
+ARG RUBY_VERSION=3.3.8
 ARG NODE_VERSION=20.19.2
 ARG YARN_VERSION=1.22.22
 
@@ -56,7 +56,75 @@ RUN yarn install --immutable && yarn add yarn@$YARN_VERSION
 COPY app/frontend ./app/frontend
 COPY vite.config.mts ./
 
-# Copy application code
+# Copy application codevolumes:
+  postgresdata:
+  valkeydata:
+  node_modules:
+  bundler:
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_ROOT_HOST: "%"
+      POSTGRES_START_TIMEOUT: 60
+    ports:
+      - 5432:5432
+    volumes:
+      - postgresdata:/var/lib/postgresql/data
+
+# redis
+  valkey:
+    image: valkey/valkey:8.1.3-alpine
+    ports:
+      - 6379:6379
+    volumes:
+      - valkeydata:/data
+
+  mailcatcher:
+    image: schickling/mailcatcher
+    ports:
+      - 1080:1080
+
+  # -------------------------------------------------------------#
+
+  app: &app
+    image: todo-list-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app #map toàn bộ code hiện tại vào /app trong container
+      - bundler:/app/.bundle #Tạo một volume tên bundler để lưu thư viện Ruby (bundle install).
+      - node_modules:/app/node_modules #Tạo một volume tên node_modules để lưu thư viện Node.js (npm install).
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: todos_development
+      DB_USERNAME: postgres
+      DB_PASSWORD: ""
+      REDIS_HOST: valkey
+      SMTP_HOST: mailcatcher
+    depends_on:
+      - postgres
+      - valkey
+    tty: true # Bật terminal ảo cho container
+    stdin_open: true # Cho phép nhập lệnh tương tác với terminal
+
+  web:
+    <<: *app
+    command: bash -c "bundle install && rm -f tmp/pids/web.pid && bin/rails server -b 0.0.0.0 -p 4000"
+    environment:
+      DB_HOST: postgres
+      REDIS_HOST: valkey
+      SMTP_HOST: mailcatcher
+      PIDFILE: tmp/pids/web.pid
+    ports:
+      - 4000:4000
+
+  sidekiq:
+    <<: *app
 COPY . .
 
 # Step 3: Runtime base (New image) (Create env clearly)
