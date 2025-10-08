@@ -20,7 +20,7 @@ gem "ssh_key_switcher"
 gem "stimulus-rails", "1.3.4"
 gem "streamio-ffmpeg", "3.0.2"
 gem "thruster", require: false
-gem "turbo-rails", "2.0.16"
+gem "turbo-rails", "2.0.17"
 gem "tzinfo-data", platforms: %i[windows jruby]
 gem "vite_rails", "3.0.19"
 gem "whenever", require: false
