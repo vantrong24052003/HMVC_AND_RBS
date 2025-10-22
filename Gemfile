@@ -8,7 +8,7 @@ gem "kamal", require: false
 gem "pg", "1.6.1"
 gem "puma", "6.4.2"
 gem "rack-cors"
-gem "rails", "8.0.2"
+gem "rails", "8.1.0"
 gem "rake", "13.3"
 gem "redis", "5.4.1"
 gem "rubocop"
