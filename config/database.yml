@@ -11,14 +11,36 @@ development:
   host: <%= ENV.fetch("DB_HOST") { "localhost" } %>
   port: <%= ENV.fetch("DB_PORT") { 5432 } %>
 
-test:
-  <<: *default
-  database: <%= ENV.fetch("DB_NAME") { "todos_test" } %>
-  username: <%= ENV.fetch("DB_USERNAME") { "postgres" } %>
-  password: <%= ENV.fetch("DB_PASSWORD") { "" } %>
-  host: <%= ENV.fetch("DB_HOST") { "localhost" } %>
-  port: <%= ENV.fetch("DB_PORT") { 5432 } %>
+staging:
+  primary:
+    <<: *default
+    database: todos_staging
+    username: postgres_staging
+    password: staging
+    host: localhost
+    port: 5432
+
+  cable:
+    <<: *default
+    database: todos_staging
+    username: postgres_staging
+    password: staging
+    host: localhost
+    port: 5432
 
 production:
-  <<: *default
-  database: todos_production
+  primary:
+    <<: *default
+    database: todos_production
+    username: postgres_production
+    password: production
+    host: localhost
+    port: 5432
+
+  cable:
+    <<: *default
+    database: todos_production
+    username: postgres_production
+    password: production
+    host: localhost
+    port: 5432

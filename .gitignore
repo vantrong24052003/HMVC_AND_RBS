@@ -2,6 +2,7 @@
 /.gem_rbs_collection
 /.idea
 /.env*
+!/.env.example
 !/.env*.erb
 
 /log/*

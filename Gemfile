@@ -25,10 +25,21 @@ gem "tzinfo-data", platforms: %i[windows jruby]
 gem "vite_rails", "3.0.19"
 gem "whenever", require: false
 
+# capistrano
+gem "capistrano", "3.19.2"
+gem "capistrano-bundler"
+gem "capistrano-nodenv"
+gem "capistrano-rails"
+gem "capistrano-rvm"
+gem "capistrano-yarn"
+
+group :development, :test, :staging do
+  gem "dotenv-rails"
+end
+
 group :development, :test do
   gem "brakeman", "7.1.0", require: false
   gem "debug", platforms: %i[mri windows], require: "debug/prelude"
-  gem "dotenv"
   gem "hmvc-rails", "1.0.4"
   gem "rubocop-capybara", require: false
   gem "rubocop-rails-omakase", require: false
