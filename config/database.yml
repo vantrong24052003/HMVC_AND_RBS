@@ -11,9 +11,9 @@ development:
   host: <%= ENV.fetch("DB_HOST") { "localhost" } %>
   port: <%= ENV.fetch("DB_PORT") { 5432 } %>
 
-test:
+staging:
   <<: *default
-  database: <%= ENV.fetch("DB_NAME") { "todos_test" } %>
+  database: <%= ENV.fetch("DB_NAME") { "todos_staging" } %>
   username: <%= ENV.fetch("DB_USERNAME") { "postgres" } %>
   password: <%= ENV.fetch("DB_PASSWORD") { "" } %>
   host: <%= ENV.fetch("DB_HOST") { "localhost" } %>
@@ -21,4 +21,8 @@ test:
 
 production:
   <<: *default
-  database: todos_production
+  database: <%= ENV.fetch("DB_NAME") { "todos_production" } %>
+  username: <%= ENV.fetch("DB_USERNAME") { "postgres" } %>
+  password: <%= ENV.fetch("DB_PASSWORD") { "" } %>
+  host: <%= ENV.fetch("DB_HOST") { "localhost" } %>
+  port: <%= ENV.fetch("DB_PORT") { 5432 } %>
